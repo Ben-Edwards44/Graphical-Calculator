@@ -165,7 +165,7 @@ class Text:
         window.blit(text_surface, text_rect)
 
 
-#test
+#test. TODO: delete later!!!!!
 if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode((500, 500))
