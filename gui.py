@@ -83,8 +83,8 @@ class TextButton(BasicButton):
     def set_font_colour(self, new_font_colour):
         self.text.set_font_colour(new_font_colour)
 
-    def set_font(self, new_font_name, new_font_size):
-        self.text.set_font(new_font_name, new_font_size)
+    def set_font_size(self, new_font_size):
+        self.text.set_font_size(new_font_size)
 
     def get_center(self):
         #return the coordinates of the center of the button
@@ -135,7 +135,7 @@ class ColourChangeButton(TextButton):
 class Text:
     #Text that can be displayed on screen
 
-    DEFUALT_FONT_SIZE = 32
+    DEFAULT_FONT_SIZE = 32
     DEFAULT_FONT_NAME = "notosansmath"
 
     DEFAULT_FONT_COLOUR = (0, 0, 0)
@@ -146,13 +146,13 @@ class Text:
 
         self.font_colour = Text.DEFAULT_FONT_COLOUR
 
-        self.set_font(Text.DEFAULT_FONT_NAME, Text.DEFUALT_FONT_SIZE)
+        self.font = pygame.font.SysFont(Text.DEFAULT_FONT_NAME, Text.DEFAULT_FONT_SIZE)
 
     def set_font_colour(self, new_font_colour):
         self.font_colour = new_font_colour
 
-    def set_font(self, new_font_name, new_font_size):
-        self.font = pygame.font.SysFont(new_font_name, new_font_size)
+    def set_font_size(self, new_font_size):
+        self.font = pygame.font.SysFont(Text.DEFAULT_FONT_NAME, new_font_size)
 
     def draw(self, window):
         #draw the text to the screen
@@ -166,24 +166,25 @@ class Text:
 
 
 #test
-pygame.init()
-window = pygame.display.set_mode((500, 500))
+if __name__ == "__main__":
+    pygame.init()
+    window = pygame.display.set_mode((500, 500))
 
-b = ColourChangeButton((100, 100), 100, 40, "hello :)")
-b.set_border_colour((255, 0, 0))
-b.set_border_width(10)
-b.set_font(None, 16)
-b.set_font_colour((255, 255, 255))
+    b = ColourChangeButton((100, 100), 100, 40, "hello :)")
+    b.set_border_colour((255, 0, 0))
+    b.set_border_width(10)
+    b.set_font(None, 16)
+    b.set_font_colour((255, 255, 255))
 
-n = 0
-while True:
-    b.draw(window)
-    pygame.display.update()
+    n = 0
+    while True:
+        b.draw(window)
+        pygame.display.update()
 
-    if b.is_clicked():
-        print(n)
-        n += 1
+        if b.is_clicked():
+            print(n)
+            n += 1
 
-    for e in pygame.event.get():
-        if e.type == pygame.QUIT:
-            quit()
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                quit()
