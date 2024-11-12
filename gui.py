@@ -75,39 +75,27 @@ class BasicButton:
 class TextButton(BasicButton):
     #A button with text on it
 
-    DEFUALT_FONT_SIZE = 32
-    DEFAULT_FONT_NAME = "notosansmath"
-
-    DEFAULT_FONT_COLOUR = (0, 0, 0)
-
     def __init__(self, top_left_pos, width, height, text):
         super().__init__(top_left_pos, width, height)
 
-        self.text = text
-
-        self.font_colour = TextButton.DEFAULT_FONT_COLOUR
-
-        self.set_font(TextButton.DEFAULT_FONT_NAME, TextButton.DEFUALT_FONT_SIZE)
+        self.text = Text(text, self.get_center())
 
     def set_font_colour(self, new_font_colour):
-        self.font_colour = new_font_colour
+        self.text.set_font_colour(new_font_colour)
 
     def set_font(self, new_font_name, new_font_size):
-        self.font = pygame.font.SysFont(new_font_name, new_font_size)
+        self.text.set_font(new_font_name, new_font_size)
 
-    def draw_text(self):
-        text_surface = self.font.render(self.text, True, self.font_colour)
-        text_rect = text_surface.get_rect()
+    def get_center(self):
+        #return the coordinates of the center of the button
+        center_x = self.top_left_x + self.width // 2
+        center_y = self.top_left_y + self.height // 2
 
-        #make sure the text is in the middle of the button
-        text_rect.centerx = self.center_x
-        text_rect.centery = self.center_y
-
-        window.blit(text_surface, text_rect)
+        return center_x, center_y
 
     def draw(self, window):
         super().draw(window)  #draw the button background
-        self.draw_text()  #now draw the text on top
+        self.text.draw(window)  #now draw the text on top
 
 
 class ColourChangeButton(TextButton):
@@ -144,11 +132,48 @@ class ColourChangeButton(TextButton):
         super().draw(window)
 
 
+class Text:
+    #Text that can be displayed on screen
+
+    DEFUALT_FONT_SIZE = 32
+    DEFAULT_FONT_NAME = "notosansmath"
+
+    DEFAULT_FONT_COLOUR = (0, 0, 0)
+
+    def __init__(self, text, center_pos):
+        self.text = text
+        self.center_pos = center_pos
+
+        self.font_colour = Text.DEFAULT_FONT_COLOUR
+
+        self.set_font(Text.DEFAULT_FONT_NAME, Text.DEFUALT_FONT_SIZE)
+
+    def set_font_colour(self, new_font_colour):
+        self.font_colour = new_font_colour
+
+    def set_font(self, new_font_name, new_font_size):
+        self.font = pygame.font.SysFont(new_font_name, new_font_size)
+
+    def draw(self, window):
+        #draw the text to the screen
+        text_surface = self.font.render(self.text, True, self.font_colour)
+        text_rect = text_surface.get_rect()
+
+        #ensure text is in correct place
+        text_rect.center = self.center_pos
+
+        window.blit(text_surface, text_rect)
+
+
 #test
 pygame.init()
 window = pygame.display.set_mode((500, 500))
 
-b = ColourChangeButton((100, 100), 100, 40, "hello!")
+b = ColourChangeButton((100, 100), 100, 40, "hello :)")
+b.set_border_colour((255, 0, 0))
+b.set_border_width(10)
+b.set_font(None, 16)
+b.set_font_colour((255, 255, 255))
 
 n = 0
 while True:
