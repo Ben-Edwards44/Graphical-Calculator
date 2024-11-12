@@ -64,7 +64,6 @@ class TextButton(BasicButton):
         self.font_colour = new_font_colour
 
     def set_font(self, new_font_name, new_font_size):
-        #create a pygame font object
         self.font = pygame.font.Font(new_font_name, new_font_size)
 
     def draw_text(self):
