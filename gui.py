@@ -75,8 +75,8 @@ class BasicButton:
 class TextButton(BasicButton):
     #A button with text on it
 
-    DEFAULT_FONT_NAME = None
     DEFUALT_FONT_SIZE = 32
+    DEFAULT_FONT_NAME = "notosansmath"
 
     DEFAULT_FONT_COLOUR = (0, 0, 0)
 
@@ -93,7 +93,7 @@ class TextButton(BasicButton):
         self.font_colour = new_font_colour
 
     def set_font(self, new_font_name, new_font_size):
-        self.font = pygame.font.Font(new_font_name, new_font_size)
+        self.font = pygame.font.SysFont(new_font_name, new_font_size)
 
     def draw_text(self):
         text_surface = self.font.render(self.text, True, self.font_colour)
