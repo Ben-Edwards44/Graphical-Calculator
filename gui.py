@@ -4,7 +4,12 @@ import pygame
 class BasicButton:
     #A button that can be clicked
 
+    DEFAULT_BORDER_WIDTH = 4
+
+    DEFAULT_BORDER_COLOUR = (150, 150, 150)
     DEFAULT_BACKGROUND_COLOUR = (255, 255, 255)
+
+    DEFAULT_CORNER_RADIUS = 12  #specifies how rounded the corners should be
 
     def __init__(self, top_left_pos, width, height):
         self.top_left_x, self.top_left_y = top_left_pos
@@ -15,10 +20,24 @@ class BasicButton:
         self.center_x = self.top_left_x + self.width // 2
         self.center_y = self.top_left_y + self.height // 2
 
+        self.border_width = BasicButton.DEFAULT_BORDER_WIDTH
+
+        self.border_colour = BasicButton.DEFAULT_BORDER_COLOUR
         self.background_colour = BasicButton.DEFAULT_BACKGROUND_COLOUR
 
-    def set_background_colour(self, new_colour):
-        self.background_colour = new_colour
+        self.corner_radius = BasicButton.DEFAULT_CORNER_RADIUS
+
+    def set_border_width(self, new_border_width):
+        self.border_width = new_border_width
+
+    def set_border_colour(self, new_border_colour):
+        self.border_colour = new_border_colour
+
+    def set_background_colour(self, new_background_colour):
+        self.background_colour = new_background_colour
+
+    def set_corner_radius(self, new_corner_radius):
+        self.corner_radius = new_corner_radius
 
     def is_hovered(self):
         #returns whether the user is currently hovering the mouse over the button
@@ -38,9 +57,19 @@ class BasicButton:
     
     def draw(self, window):
         #draw the button as a rectangle onto the passed in window
-        rect_value = (self.top_left_x, self.top_left_y, self.width, self.height)
 
-        pygame.draw.rect(window, self.background_colour, rect_value)
+        #draw the button background
+        background_rect_value = (self.top_left_x, self.top_left_y, self.width, self.height)
+
+        pygame.draw.rect(window, self.background_colour, background_rect_value)
+
+        #draw the button border
+        border_rect_value = (self.top_left_x - self.border_width, 
+                             self.top_left_y - self.border_width, 
+                             self.width + self.border_width * 2, 
+                             self.height + self.border_width * 2)
+        
+        pygame.draw.rect(window, self.border_colour, border_rect_value, self.border_width, self.corner_radius)
 
 
 class TextButton(BasicButton):
