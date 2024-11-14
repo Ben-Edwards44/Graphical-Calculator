@@ -3,7 +3,7 @@ import pygame
 
 
 def main(window):
-    temp = gui.Text("matrix", (250, 250))
+    temp = gui.DisplayText("matrix", (250, 250))
     temp.set_font_colour((255, 255, 255))
 
     window.fill((0, 0, 0))

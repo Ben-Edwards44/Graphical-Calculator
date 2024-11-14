@@ -238,7 +238,9 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode((500, 500))
 
-    b = TextInput((100, 100), 100, 40, "enter:")
+    b = DisplayText("hello", (100, 100))
+    b.set_font_colour((255, 255, 255))
+    b.set_displayed_text("bye")
 
     n = 0
     while True:

@@ -46,7 +46,7 @@ class MainMenu:
         #initialise all of the gui elements present in the main menu
         all_gui_elements = []
 
-        heading_text = gui.Text("Calculator Modes", MainMenu.HEADING_CENTER_POS)
+        heading_text = gui.DisplayText("Calculator Modes", MainMenu.HEADING_CENTER_POS)
         heading_text.set_font_size(52)
 
         all_gui_elements.append(heading_text)
