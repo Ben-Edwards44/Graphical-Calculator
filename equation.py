@@ -11,6 +11,4 @@ def main(window):
     pygame.display.update()
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit()
+        gui.check_user_quit()

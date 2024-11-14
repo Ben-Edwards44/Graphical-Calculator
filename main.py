@@ -12,8 +12,6 @@ SCREEN_HEIGHT = 500
 
 
 class MainMenu:
-    #The buttons and GUI elements that form part of the main menu
-
     BACKGROUND_COLOUR = (200, 200, 200)
 
     HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
@@ -106,10 +104,7 @@ def main():
         menu.check_user_input()
         menu.draw()
 
-        #check if user has pressed the quit button
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit()
+        gui.check_user_quit()
 
 
 if __name__ == "__main__":

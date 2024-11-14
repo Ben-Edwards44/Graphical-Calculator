@@ -2,8 +2,6 @@ import pygame
 
 
 class BasicButton:
-    #A button that can be clicked
-
     DEFAULT_BORDER_WIDTH = 4
 
     DEFAULT_BORDER_COLOUR = (150, 150, 150)
@@ -73,18 +71,19 @@ class BasicButton:
 
 
 class TextButton(BasicButton):
-    #A button with text on it
-
     def __init__(self, top_left_pos, width, height, text):
         super().__init__(top_left_pos, width, height)
 
-        self.text = Text(text, self.get_center())
+        self.text = DisplayText(text, self.get_center())
 
     def set_font_colour(self, new_font_colour):
         self.text.set_font_colour(new_font_colour)
 
     def set_font_size(self, new_font_size):
         self.text.set_font_size(new_font_size)
+
+    def set_displayed_text(self, new_displayed_text):
+        self.text.set_displayed_text(new_displayed_text)
 
     def get_center(self):
         #return the coordinates of the center of the button
@@ -99,8 +98,6 @@ class TextButton(BasicButton):
 
 
 class ColourChangeButton(TextButton):
-    #A button that displays text, and changes colour when hovered and clicked
-
     DEFAULT_NORMAL_COLOUR = (255, 0, 0)
     DEFAULT_HOVERED_COLOUR = (0, 255, 0)
     DEFAULT_CLICKED_COLOUR = (0, 0, 255)
@@ -132,37 +129,108 @@ class ColourChangeButton(TextButton):
         super().draw(window)
 
 
-class Text:
-    #Text that can be displayed on screen
-
+class DisplayText:
     DEFAULT_FONT_SIZE = 32
     DEFAULT_FONT_NAME = "notosansmath"
 
     DEFAULT_FONT_COLOUR = (0, 0, 0)
 
-    def __init__(self, text, center_pos):
-        self.text = text
+    def __init__(self, displayed_text, center_pos):
+        self.displayed_text = displayed_text
         self.center_pos = center_pos
 
-        self.font_colour = Text.DEFAULT_FONT_COLOUR
+        self.font_colour = DisplayText.DEFAULT_FONT_COLOUR
 
-        self.font = pygame.font.SysFont(Text.DEFAULT_FONT_NAME, Text.DEFAULT_FONT_SIZE)
+        self.font = pygame.font.SysFont(DisplayText.DEFAULT_FONT_NAME, DisplayText.DEFAULT_FONT_SIZE)
 
     def set_font_colour(self, new_font_colour):
         self.font_colour = new_font_colour
 
     def set_font_size(self, new_font_size):
-        self.font = pygame.font.SysFont(Text.DEFAULT_FONT_NAME, new_font_size)
+        self.font = pygame.font.SysFont(DisplayText.DEFAULT_FONT_NAME, new_font_size)
+
+    def set_displayed_text(self, new_displayed_text):
+        self.displayed_text = new_displayed_text
 
     def draw(self, window):
-        #draw the text to the screen
-        text_surface = self.font.render(self.text, True, self.font_colour)
+        text_surface = self.font.render(self.displayed_text, True, self.font_colour)
         text_rect = text_surface.get_rect()
 
-        #ensure text is in correct place
         text_rect.center = self.center_pos
 
-        window.blit(text_surface, text_rect)
+        window.blit(text_surface, text_rect)  #draw the text to the screen
+
+
+class TextInput:
+    DEFAULT_SELECTED_COLOUR = (100, 100, 100)
+    DEFAULT_NON_SELECTED_COLOUR = (200, 200, 200)
+
+    def __init__(self, top_left_pos, width, height, prompt_text):
+        self.prompt_text = prompt_text
+        self.inputted_text = ""
+
+        self.selected = False
+        self.can_update_selected = True
+
+        self.selected_colour = TextInput.DEFAULT_SELECTED_COLOUR
+        self.non_selected_colour = TextInput.DEFAULT_NON_SELECTED_COLOUR
+
+        self.button = ColourChangeButton(top_left_pos, width, height, prompt_text)
+
+    def set_selected_colour(self, new_colour):
+        self.selected_colour = new_colour
+
+    def set_non_selected_colour(self, new_colour):
+        self.non_selected_colour = new_colour
+
+    def update_selected(self):
+        if self.button.is_clicked():
+            if self.can_update_selected:
+                self.selected = not self.selected
+                self.can_update_selected = False  #make sure we don't toggle self.selected again until the user has stopped clicking the button
+        else:
+            self.can_update_selected = True  #user has stopped clicking, so we should update self.selected next time they click
+
+    def update_inputted_text(self):
+        #check if the user is currently typing text into the input box. If so, get the typed text
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.inputted_text = self.inputted_text[:-1]  #remove the last character of the inputted text
+                else:
+                    self.inputted_text += event.unicode  #add the typed character to the inputted text
+
+    def check_user_input(self):
+        self.update_selected()
+
+        if self.selected:
+            self.update_inputted_text()
+
+    def draw(self, window):
+        self.check_user_input()  #update the self.selected and self.inputted_text attributes
+
+        if self.selected:
+            button_colour = self.selected_colour
+        else:
+            button_colour = self.non_selected_colour
+
+        if self.inputted_text == "":
+            button_text = self.prompt_text
+        else:
+            button_text = self.inputted_text
+
+        self.button.set_displayed_text(button_text)
+        self.button.set_normal_colour(button_colour)
+
+        self.button.draw(window)
+
+
+def check_user_quit():
+    #check whether the user has pressed the quit button in the top right of the window
+    quit_events = pygame.event.get(pygame.QUIT)
+
+    if len(quit_events) > 0:
+        quit()
 
 
 #test. TODO: delete later!!!!!
@@ -170,21 +238,11 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode((500, 500))
 
-    b = ColourChangeButton((100, 100), 100, 40, "hello :)")
-    b.set_border_colour((255, 0, 0))
-    b.set_border_width(10)
-    b.set_font(None, 16)
-    b.set_font_colour((255, 255, 255))
+    b = TextInput((100, 100), 100, 40, "enter:")
 
     n = 0
     while True:
         b.draw(window)
         pygame.display.update()
 
-        if b.is_clicked():
-            print(n)
-            n += 1
-
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                quit()
+        check_user_quit()
