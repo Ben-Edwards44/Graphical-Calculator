@@ -25,7 +25,8 @@ class Token:
     FUNCTIONS = {
         "sin" : math.sin,
         "cos" : math.cos,
-        "tan" : math.tan
+        "tan" : math.tan,
+        "sqrt" : math.sqrt
     }
 
     #token types
@@ -112,7 +113,7 @@ class Token:
         if not self.is_function():
             return  #stops error when Token.FUNCTIONS is accessed
         
-        func = Token.FUNCTIONS[argument]
+        func = Token.FUNCTIONS[self.string]
 
         return func(argument)
 
