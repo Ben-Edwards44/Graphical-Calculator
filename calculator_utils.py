@@ -109,10 +109,7 @@ class Token:
             case "^":
                 return operand1 ** operand2
             
-    def apply_function(self, argument):
-        if not self.is_function():
-            return  #stops error when Token.FUNCTIONS is accessed
-        
+    def apply_function(self, argument):        
         func = Token.FUNCTIONS[self.string]
 
         return func(argument)

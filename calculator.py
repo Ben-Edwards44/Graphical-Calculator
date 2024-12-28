@@ -166,8 +166,13 @@ class ExpressionBox:
         self.answer_string = self.evaluate_expression()
 
     def evaluate_expression(self):
-        answer = self.expression.evaluate()
-        answer_string = str(answer)
+        try:
+            answer = self.expression.evaluate()
+            answer_string = str(answer)
+        except:
+            #The user has entered an invalid expression
+            self.expression_string = "ERROR"
+            answer_string = "0"
 
         return answer_string
     
