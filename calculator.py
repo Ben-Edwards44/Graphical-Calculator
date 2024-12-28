@@ -17,6 +17,10 @@ class CalculatorMenu:
     BACKGROUND_BOX_BORDER_WIDTH = 5
     BACKGROUND_BOX_CORNER_RADIUS = 5
 
+    NUM_EXPRESSION_BOXES = 4
+
+    EXPRESSION_BOX_PADDING_Y = 20
+
     def __init__(self, window):
         self.window = window
 
@@ -96,9 +100,15 @@ class CalculatorMenu:
     def draw_expression_boxes(self):
         width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
 
-        for index, box in enumerate(self.expression_boxes):
-            top_left_y = index * 50
-            box.draw((CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0], top_left_y), width)
+        available_height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+        total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)  #we need to +1 to the number of expression boxes because the input box at the bottom also takes up space
+        box_height = total_height - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+
+        most_recent_boxes = self.expression_boxes[-CalculatorMenu.NUM_EXPRESSION_BOXES:]  #only draw the most recent expression boxes
+
+        for index, box in enumerate(most_recent_boxes):
+            top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.EXPRESSION_BOX_PADDING_Y + index * total_height
+            box.draw((CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0], top_left_y), width, box_height)
 
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
@@ -131,14 +141,14 @@ class ExpressionBox:
 
         return answer_string
     
-    def draw(self, top_left_pos, width):
-        background_rect = gui.BasicButton(top_left_pos, width, 50)
+    def draw(self, top_left_pos, width, height):
+        background_rect = gui.BasicButton(top_left_pos, width, height)
 
         expression_text = gui.DisplayText(self.expression_string, top_left_pos)
         answer_text = gui.DisplayText(self.answer_string, top_left_pos)
 
-        expression_text.set_top_left_pos(top_left_pos)
-        answer_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))
+        expression_text.set_top_left_pos(top_left_pos)  #put the expression on the left of the box
+        answer_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))  #put the answer on the right of the box
 
         background_rect.draw(self.window)
         expression_text.draw(self.window)
