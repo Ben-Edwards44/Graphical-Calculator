@@ -11,15 +11,15 @@ class CalculatorMenu:
     CHAR_BUTTON_WIDTH = 50
     CHAR_BUTTON_HEIGHT = 50
 
-    CHAR_BUTTON_TOP_LEFT = (100, 420)  #top left pos of the row of buttons
+    CHAR_BUTTON_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 80)  #top left pos of the row of buttons
 
     BACKGROUND_BOX_TOP_LEFT = (100, 100)
-    BACKGROUND_BOX_BORDER_WIDTH = 5
-    BACKGROUND_BOX_CORNER_RADIUS = 5
+    BACKGROUND_BOX_BORDER_WIDTH = 6
+    BACKGROUND_BOX_CORNER_RADIUS = 12
 
     NUM_EXPRESSION_BOXES = 4
 
-    EXPRESSION_BOX_PADDING_X = 5
+    EXPRESSION_BOX_PADDING_X = 8
     EXPRESSION_BOX_PADDING_Y = 10
 
     def __init__(self, window):
