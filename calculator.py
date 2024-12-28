@@ -4,14 +4,14 @@ import calculator_utils
 
 
 class CalculatorMenu:
-    EXPRESSION_FONT_SIZE = 40
+    EXPRESSION_FONT_SIZE = 28
 
     CHAR_BUTTONS = ["pi", "ANS", "sqrt", "="]
 
     CHAR_BUTTON_WIDTH = 50
     CHAR_BUTTON_HEIGHT = 50
 
-    CHAR_BUTTON_TOP_LEFT = (100, 400)  #top left pos of the row of buttons
+    CHAR_BUTTON_TOP_LEFT = (100, 420)  #top left pos of the row of buttons
 
     BACKGROUND_BOX_TOP_LEFT = (100, 100)
     BACKGROUND_BOX_BORDER_WIDTH = 5
@@ -96,6 +96,22 @@ class CalculatorMenu:
 
         return width, box_height, top_left_x
     
+    def get_char_button_text(self, char_button):
+        #get the text to add to the input box when a char button is pressed
+        match char_button:
+            case "ANS":
+                if len(self.expression_boxes) > 0:
+                    last_expression = self.expression_boxes[-1]
+                    prev_ans = last_expression.answer_string
+                else:
+                    prev_ans = 0
+
+                return prev_ans
+            case "sqrt":
+                return "sqrt("
+            case _:
+                return char_button
+    
     def check_user_input(self):
         self.expression_input_box.check_user_input()  #check if user is entering expression
         if self.back_button.is_clicked(): self.go_back = True  #check if user has pressed back
@@ -112,7 +128,8 @@ class CalculatorMenu:
                     new_expression_box = ExpressionBox(self.window, self.expression_input_box.get_inputted_text())
                     self.expression_boxes.append(new_expression_box)
                 else:
-                    self.expression_input_box.input_text(char)
+                    text_to_add = self.get_char_button_text(char)
+                    self.expression_input_box.input_text(text_to_add)
 
     def draw_expression_boxes(self):
         width, height, top_left_x = self.get_expression_box_dimensions()
