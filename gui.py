@@ -208,6 +208,9 @@ class TextInput:
     def set_font_size(self, new_font_size):
         self.button.set_font_size(new_font_size)
 
+    def get_inputted_text(self):
+        return self.inputted_text
+
     def update_selected(self):
         if self.button.is_clicked():
             if self.can_update_selected:

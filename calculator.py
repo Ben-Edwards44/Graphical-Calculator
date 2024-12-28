@@ -6,7 +6,7 @@ import calculator_utils
 class CalculatorMenu:
     EXPRESSION_FONT_SIZE = 40
 
-    CHAR_BUTTONS = ["pi", "ANS", "sqrt"]
+    CHAR_BUTTONS = ["pi", "ANS", "sqrt", "="]
 
     CHAR_BUTTON_WIDTH = 50
     CHAR_BUTTON_HEIGHT = 50
@@ -71,7 +71,11 @@ class CalculatorMenu:
             
             if clicked and not already_been_clicked:
                 char = CalculatorMenu.CHAR_BUTTONS[index]
-                self.expression_input_box.input_text(char)
+
+                if char == "=":
+                    evaluate_expression(self.expression_input_box.get_inputted_text())
+                else:
+                    self.expression_input_box.input_text(char)
 
     def draw_background(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
@@ -101,6 +105,13 @@ class CalculatorMenu:
             button.draw(self.window)
 
         pygame.display.update()
+
+
+def evaluate_expression(entered_expression):
+    expression = calculator_utils.InfixExpression(entered_expression)
+    result = expression.evaluate()
+
+    print(result)
 
 
 def main(window):
