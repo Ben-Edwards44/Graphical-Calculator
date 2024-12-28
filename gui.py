@@ -38,6 +38,8 @@ class BasicButton:
 
         self.corner_radius = BasicButton.DEFAULT_CORNER_RADIUS
 
+        self.has_been_clicked = False
+
     def set_border_width(self, new_border_width):
         self.border_width = new_border_width
 
@@ -49,6 +51,10 @@ class BasicButton:
 
     def set_corner_radius(self, new_corner_radius):
         self.corner_radius = new_corner_radius
+
+    def get_has_been_clicked(self):
+        #if the user clicks on a button for multiple frames, we may not want to register multiple clicks so we check if the button has already been clicked
+        return self.has_been_clicked
 
     def is_hovered(self):
         #returns whether the user is currently hovering the mouse over the button
@@ -64,7 +70,10 @@ class BasicButton:
         mouse_pressed = pygame.mouse.get_pressed()[0]  #index 0 corresponds to left mouse button
         hovering = self.is_hovered()
 
-        return mouse_pressed and hovering
+        clicked = mouse_pressed and hovering
+        self.has_been_clicked = clicked
+
+        return clicked
     
     def draw(self, window):
         #draw the button as a rectangle onto the passed in window
@@ -207,6 +216,9 @@ class TextInput:
         else:
             self.can_update_selected = True  #user has stopped clicking, so we should update self.selected next time they click
 
+    def input_text(self, inputted_text):
+        self.inputted_text += inputted_text
+
     def update_inputted_text(self):
         #check if the user is currently typing text into the input box. If so, get the typed text
         for event in pygame.event.get():
@@ -214,7 +226,7 @@ class TextInput:
                 if event.key == pygame.K_BACKSPACE:
                     self.inputted_text = self.inputted_text[:-1]  #remove the last character of the inputted text
                 else:
-                    self.inputted_text += event.unicode  #add the typed character to the inputted text
+                    self.input_text(event.unicode)  #add the typed character to the inputted text
 
     def check_user_input(self):
         self.update_selected()
