@@ -1,6 +1,14 @@
 import pygame
 
 
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 500
+
+HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
+
+BACKGROUND_COLOUR = (200, 200, 200)
+
+
 class BasicButton:
     DEFAULT_BORDER_WIDTH = 4
 

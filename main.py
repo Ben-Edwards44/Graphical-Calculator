@@ -7,15 +7,7 @@ import equation
 import calculator
 
 
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
-
-
 class MainMenu:
-    BACKGROUND_COLOUR = (200, 200, 200)
-
-    HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
-
     #specifies the names of the modes as well as the order in which the buttons appear
     MODE_NAMES = [
         ["Calculator", "2D grapher"],
@@ -34,7 +26,7 @@ class MainMenu:
     BUTTON_PADDING_X = 10  #distance between each mode button in the grid
     BUTTON_PADDING_Y = 10  #distance between each mode button in the grid
 
-    BUTTON_GRID_TOP_LEFT = (50, 250)
+    BUTTON_GRID_TOP_LEFT = (50, gui.SCREEN_HEIGHT // 2)
 
     def __init__(self, window):
         self.window = window
@@ -46,7 +38,7 @@ class MainMenu:
         #initialise all of the gui elements present in the main menu
         all_gui_elements = []
 
-        heading_text = gui.DisplayText("Calculator Modes", MainMenu.HEADING_CENTER_POS)
+        heading_text = gui.DisplayText("Calculator Modes", gui.HEADING_CENTER_POS)
         heading_text.set_font_size(52)
 
         all_gui_elements.append(heading_text)
@@ -78,7 +70,7 @@ class MainMenu:
                     click_event_function(self.window)
 
     def draw(self):        
-        self.window.fill(MainMenu.BACKGROUND_COLOUR)
+        self.window.fill(gui.BACKGROUND_COLOUR)
 
         for element in self.all_gui_elements:
             element.draw(self.window)
@@ -91,7 +83,7 @@ def create_window():
     pygame.init()
     pygame.display.set_caption("Graphical Calculator")
 
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    window = pygame.display.set_mode((gui.SCREEN_WIDTH, gui.SCREEN_HEIGHT))
 
     return window
 
