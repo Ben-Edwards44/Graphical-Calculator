@@ -13,6 +13,10 @@ class CalculatorMenu:
 
     CHAR_BUTTON_TOP_LEFT = (100, 400)  #top left pos of the row of buttons
 
+    BACKGROUND_BOX_TOP_LEFT = (100, 100)
+    BACKGROUND_BOX_BORDER_WIDTH = 5
+    BACKGROUND_BOX_CORNER_RADIUS = 5
+
     def __init__(self, window):
         self.window = window
 
@@ -60,6 +64,7 @@ class CalculatorMenu:
         self.expression_input_box.check_user_input()  #check if user is entering expression
         if self.back_button.is_clicked(): self.go_back = True  #check if user has pressed back
     
+        #check if user has pressed any of the char buttons
         for index, button in enumerate(self.char_buttons):
             already_been_clicked = button.get_has_been_clicked()
             clicked = button.is_clicked()
@@ -71,9 +76,19 @@ class CalculatorMenu:
     def draw_background(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
 
-        #draw box around expression input boxes
-        pygame.draw.rect(self.window, (0, 0, 0), (100, 100, 300, 300))
-        pygame.draw.rect(self.window, (255, 255, 255), (105, 105, 290, 290))
+        #draw a box in center of the screen around expression input boxes
+        border_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
+        border_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1]
+        border_width = gui.SCREEN_WIDTH - 2 * border_x
+        border_height = gui.SCREEN_HEIGHT - 2 * border_y
+
+        inner_x = border_x + CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH
+        inner_y = border_y + CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH
+        inner_width = gui.SCREEN_WIDTH - 2 * inner_x
+        inner_height = gui.SCREEN_HEIGHT - 2 * inner_y
+
+        pygame.draw.rect(self.window, (255, 255, 255), (inner_x, inner_y, inner_width, inner_height))
+        pygame.draw.rect(self.window, (0, 0, 0), (border_x, border_y, border_width, border_height), CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH, CalculatorMenu.BACKGROUND_BOX_CORNER_RADIUS)
 
     def draw(self):
         self.draw_background()
