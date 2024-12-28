@@ -39,7 +39,7 @@ class MainMenu:
         all_gui_elements = []
 
         heading_text = gui.DisplayText("Calculator Modes", gui.HEADING_CENTER_POS)
-        heading_text.set_font_size(52)
+        heading_text.set_font_size(gui.HEADING_FONT_SIZE)
 
         all_gui_elements.append(heading_text)
 

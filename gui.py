@@ -4,6 +4,7 @@ import pygame
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 
+HEADING_FONT_SIZE = 52
 HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
 
 BACKGROUND_COLOUR = (200, 200, 200)
@@ -215,8 +216,6 @@ class TextInput:
             self.update_inputted_text()
 
     def draw(self, window):
-        self.check_user_input()  #update the self.selected and self.inputted_text attributes
-
         if self.selected:
             button_colour = self.selected_colour
         else:
@@ -239,20 +238,3 @@ def check_user_quit():
 
     if len(quit_events) > 0:
         quit()
-
-
-#test. TODO: delete later!!!!!
-if __name__ == "__main__":
-    pygame.init()
-    window = pygame.display.set_mode((500, 500))
-
-    b = DisplayText("hello", (100, 100))
-    b.set_font_colour((255, 255, 255))
-    b.set_displayed_text("bye")
-
-    n = 0
-    while True:
-        b.draw(window)
-        pygame.display.update()
-
-        check_user_quit()
