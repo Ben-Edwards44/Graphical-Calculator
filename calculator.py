@@ -22,10 +22,13 @@ class CalculatorMenu:
 
         self.go_back = False
 
+        self.expression_boxes = []
+
         self.heading_text = self.setup_heading_text()
         self.expression_input_box = self.setup_expression_input()
         self.back_button = self.setup_back_button()
         self.char_buttons = self.setup_char_buttons()
+        self.background_rect = self.setup_background_rect()
 
     def setup_heading_text(self):
         heading_text = gui.DisplayText("Calculator", gui.HEADING_CENTER_POS)
@@ -60,6 +63,18 @@ class CalculatorMenu:
 
         return char_buttons
     
+    def setup_background_rect(self):
+        width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
+        height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1]
+
+        #although the background rect is not a button, it will be draw exactly the same as one so it is stored as a button object
+        background_rect = gui.BasicButton(CalculatorMenu.BACKGROUND_BOX_TOP_LEFT, width, height)
+
+        background_rect.set_border_width(CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH)
+        background_rect.set_corner_radius(CalculatorMenu.BACKGROUND_BOX_CORNER_RADIUS)
+
+        return background_rect
+    
     def check_user_input(self):
         self.expression_input_box.check_user_input()  #check if user is entering expression
         if self.back_button.is_clicked(): self.go_back = True  #check if user has pressed back
@@ -73,30 +88,22 @@ class CalculatorMenu:
                 char = CalculatorMenu.CHAR_BUTTONS[index]
 
                 if char == "=":
-                    evaluate_expression(self.expression_input_box.get_inputted_text())
+                    new_expression_box = ExpressionBox(self.window, self.expression_input_box.get_inputted_text())
+                    self.expression_boxes.append(new_expression_box)
                 else:
                     self.expression_input_box.input_text(char)
 
-    def draw_background(self):
-        self.window.fill(gui.BACKGROUND_COLOUR)
+    def draw_expression_boxes(self):
+        width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
 
-        #draw a box in center of the screen around expression input boxes
-        border_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
-        border_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1]
-        border_width = gui.SCREEN_WIDTH - 2 * border_x
-        border_height = gui.SCREEN_HEIGHT - 2 * border_y
-
-        inner_x = border_x + CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH
-        inner_y = border_y + CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH
-        inner_width = gui.SCREEN_WIDTH - 2 * inner_x
-        inner_height = gui.SCREEN_HEIGHT - 2 * inner_y
-
-        pygame.draw.rect(self.window, (255, 255, 255), (inner_x, inner_y, inner_width, inner_height))
-        pygame.draw.rect(self.window, (0, 0, 0), (border_x, border_y, border_width, border_height), CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH, CalculatorMenu.BACKGROUND_BOX_CORNER_RADIUS)
+        for index, box in enumerate(self.expression_boxes):
+            top_left_y = index * 50
+            box.draw((CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0], top_left_y), width)
 
     def draw(self):
-        self.draw_background()
+        self.window.fill(gui.BACKGROUND_COLOUR)
 
+        self.background_rect.draw(self.window)
         self.heading_text.draw(self.window)
         self.expression_input_box.draw(self.window)
         self.back_button.draw(self.window)
@@ -104,14 +111,38 @@ class CalculatorMenu:
         for button in self.char_buttons:
             button.draw(self.window)
 
+        self.draw_expression_boxes()
+
         pygame.display.update()
 
 
-def evaluate_expression(entered_expression):
-    expression = calculator_utils.InfixExpression(entered_expression)
-    result = expression.evaluate()
+class ExpressionBox:
+    def __init__(self, window, expression_string):
+        self.window = window
+        self.expression_string = expression_string
 
-    print(result)
+        self.expression = calculator_utils.InfixExpression(expression_string)
+
+        self.answer_string = self.evaluate_expression()
+
+    def evaluate_expression(self):
+        answer = self.expression.evaluate()
+        answer_string = str(answer)
+
+        return answer_string
+    
+    def draw(self, top_left_pos, width):
+        background_rect = gui.BasicButton(top_left_pos, width, 50)
+
+        expression_text = gui.DisplayText(self.expression_string, top_left_pos)
+        answer_text = gui.DisplayText(self.answer_string, top_left_pos)
+
+        expression_text.set_top_left_pos(top_left_pos)
+        answer_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))
+
+        background_rect.draw(self.window)
+        expression_text.draw(self.window)
+        answer_text.draw(self.window)
 
 
 def main(window):
