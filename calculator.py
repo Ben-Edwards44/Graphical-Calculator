@@ -170,7 +170,7 @@ class ExpressionBox:
             answer = self.expression.evaluate()
             answer_string = str(answer)
         except:
-            #The user has entered an invalid expression
+            #the user has entered an invalid expression: an error will be displayed
             self.expression_string = "ERROR"
             answer_string = "0"
 
