@@ -19,7 +19,8 @@ class CalculatorMenu:
 
     NUM_EXPRESSION_BOXES = 4
 
-    EXPRESSION_BOX_PADDING_Y = 20
+    EXPRESSION_BOX_PADDING_X = 5
+    EXPRESSION_BOX_PADDING_Y = 10
 
     def __init__(self, window):
         self.window = window
@@ -98,7 +99,9 @@ class CalculatorMenu:
                     self.expression_input_box.input_text(char)
 
     def draw_expression_boxes(self):
-        width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
+        top_left_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0] + CalculatorMenu.EXPRESSION_BOX_PADDING_X
+
+        width = gui.SCREEN_WIDTH - 2 * top_left_x
 
         available_height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
         total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)  #we need to +1 to the number of expression boxes because the input box at the bottom also takes up space
@@ -108,7 +111,7 @@ class CalculatorMenu:
 
         for index, box in enumerate(most_recent_boxes):
             top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.EXPRESSION_BOX_PADDING_Y + index * total_height
-            box.draw((CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0], top_left_y), width, box_height)
+            box.draw((top_left_x, top_left_y), width, box_height)
 
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
