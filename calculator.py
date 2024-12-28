@@ -42,7 +42,12 @@ class CalculatorMenu:
         return heading_text
     
     def setup_expression_input(self):
-        expression_input_box = gui.TextInput((105, 340), 300, 50, "Enter expression:")
+        width, height, top_left_x = self.get_expression_box_dimensions()
+
+        #position the input box at the bottom of the screen
+        top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.NUM_EXPRESSION_BOXES * (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y) + CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+
+        expression_input_box = gui.TextInput((top_left_x, top_left_y), width, height, "Enter expression:")
         expression_input_box.set_font_size(CalculatorMenu.EXPRESSION_FONT_SIZE)
 
         return expression_input_box
@@ -80,6 +85,17 @@ class CalculatorMenu:
 
         return background_rect
     
+    def get_expression_box_dimensions(self):
+        #get the width, height and x coordinate of the top left pos of the expression boxes
+        top_left_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0] + CalculatorMenu.EXPRESSION_BOX_PADDING_X
+        width = gui.SCREEN_WIDTH - 2 * top_left_x
+
+        available_height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+        total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)  #we need to +1 to the number of expression boxes because the input box at the bottom also takes up space
+        box_height = total_height - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+
+        return width, box_height, top_left_x
+    
     def check_user_input(self):
         self.expression_input_box.check_user_input()  #check if user is entering expression
         if self.back_button.is_clicked(): self.go_back = True  #check if user has pressed back
@@ -99,19 +115,13 @@ class CalculatorMenu:
                     self.expression_input_box.input_text(char)
 
     def draw_expression_boxes(self):
-        top_left_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0] + CalculatorMenu.EXPRESSION_BOX_PADDING_X
-
-        width = gui.SCREEN_WIDTH - 2 * top_left_x
-
-        available_height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
-        total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)  #we need to +1 to the number of expression boxes because the input box at the bottom also takes up space
-        box_height = total_height - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+        width, height, top_left_x = self.get_expression_box_dimensions()
 
         most_recent_boxes = self.expression_boxes[-CalculatorMenu.NUM_EXPRESSION_BOXES:]  #only draw the most recent expression boxes
 
         for index, box in enumerate(most_recent_boxes):
-            top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.EXPRESSION_BOX_PADDING_Y + index * total_height
-            box.draw((top_left_x, top_left_y), width, box_height)
+            top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.EXPRESSION_BOX_PADDING_Y + index * (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y)
+            box.draw((top_left_x, top_left_y), width, height)
 
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
