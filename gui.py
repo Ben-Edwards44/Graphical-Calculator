@@ -7,6 +7,10 @@ SCREEN_HEIGHT = 500
 HEADING_FONT_SIZE = 52
 HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
 
+BACK_BUTTON_POS = (50, 50)
+BACK_BUTTON_WIDTH = 50
+BACK_BUTTON_HEIGHT = 50
+
 BACKGROUND_COLOUR = (200, 200, 200)
 
 
@@ -191,6 +195,9 @@ class TextInput:
 
     def set_non_selected_colour(self, new_colour):
         self.non_selected_colour = new_colour
+
+    def set_font_size(self, new_font_size):
+        self.button.set_font_size(new_font_size)
 
     def update_selected(self):
         if self.button.is_clicked():
