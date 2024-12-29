@@ -130,12 +130,3 @@ class SquareMatrix(Matrix):
         inverse_mat = adjoint_matrix.scalar_multiply(1 / det)
 
         return inverse_mat
-    
-
-a = SquareMatrix([[5, 8, 9, 2],
-                  [1, 5, 8, 6],
-                  [2, 4, 3, 3],
-                  [9, 0, 1, 2]])
-
-
-print(a.inverse().items)
