@@ -9,8 +9,6 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 
 class SimulEquationMenu:
-    EQUATIONS_TOP_LEFT = (100, 100)
-
     SOLVE_BUTTON_TOP_LEFT = (20, 20)
     SOLVE_BUTTON_WIDTH = 80
     SOLVE_BUTTON_HEIGHT = 50
@@ -92,7 +90,7 @@ class SimulEquationMenu:
 
 
 class Equation:
-    FIRST_EQUATION_POS = (100, 100)  #top left of the first equation
+    FIRST_EQUATION_POS = (20, 100)  #top left of the first equation
 
     HEIGHT = 50
 
@@ -153,11 +151,11 @@ class Equation:
 
 class Variable:
     INPUT_WIDTH = 50
-    INPUT_HEIGHT = 50
+    INPUT_HEIGHT = 40
 
-    TEXT_WIDTH = 50
+    TEXT_WIDTH = 30
 
-    FONT_SIZE = 32
+    FONT_SIZE = 26
 
     def __init__(self, window, name, top_left):
         self.window = window
@@ -198,8 +196,7 @@ class Variable:
 
 
 class Constant(Variable):
-    #The constant will draw a "=" symbol in front of the input box
-
+    #the constant will draw a "=" symbol in front of the input box
     def __init__(self, window, top_left):
         super().__init__(window, "=", top_left)
 
