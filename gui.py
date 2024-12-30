@@ -7,9 +7,9 @@ SCREEN_HEIGHT = 600
 HEADING_FONT_SIZE = 52
 HEADING_CENTER_POS = (SCREEN_WIDTH // 2, 50)
 
-BACK_BUTTON_POS = (50, 50)
-BACK_BUTTON_WIDTH = 50
-BACK_BUTTON_HEIGHT = 50
+BACK_BUTTON_POS = (20, 20)
+BACK_BUTTON_WIDTH = 40
+BACK_BUTTON_HEIGHT = 40
 
 BACKGROUND_COLOUR = (200, 200, 200)
 
@@ -276,6 +276,13 @@ class TextInput:
         self.button.set_normal_colour(button_colour)
 
         self.button.draw(window)
+
+
+def create_back_button():
+    #create a back button in the top left of the screen (same for all modes)
+    back_button = ColourChangeButton(BACK_BUTTON_POS, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, "<-")
+
+    return back_button
 
 
 def check_user_quit():

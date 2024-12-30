@@ -9,18 +9,21 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 
 class SimulEquationMenu:
-    SOLVE_BUTTON_TOP_LEFT = (20, 20)
+    SOLVE_BUTTON_TOP_LEFT = (300, 20)
     SOLVE_BUTTON_WIDTH = 80
     SOLVE_BUTTON_HEIGHT = 50
 
-    NUM_EQUATION_TOP_LEFT = (410, 20)
+    NUM_EQUATION_TOP_LEFT = (500, 20)
     NUM_EQUATION_WIDTH = 80
     NUM_EQUATION_HEIGHT = 50
 
     def __init__(self, window):
         self.window = window
 
+        self.go_back = False
+
         self.solve_button = self.setup_solve_button()
+        self.back_button = gui.create_back_button()
         self.num_equation_input = self.setup_num_equation_input()
 
         self.equations = self.create_equations(3)
@@ -73,6 +76,7 @@ class SimulEquationMenu:
         for equation in self.equations:
             equation.check_user_input()
 
+        if self.back_button.is_clicked(): self.go_back = True
         if self.solve_button.is_clicked(): self.solve_equations()
 
         self.update_num_equations()
@@ -81,6 +85,7 @@ class SimulEquationMenu:
         self.window.fill(gui.BACKGROUND_COLOUR)
 
         self.solve_button.draw(self.window)
+        self.back_button.draw(self.window)
         self.num_equation_input.draw(self.window)
 
         for equation in self.equations:
@@ -224,7 +229,7 @@ class Constant(Variable):
 def main(window):
     menu = SimulEquationMenu(window)
 
-    while True:
+    while not menu.go_back:
         menu.check_user_input()
         menu.draw()
 

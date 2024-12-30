@@ -31,7 +31,7 @@ class CalculatorMenu:
 
         self.heading_text = self.setup_heading_text()
         self.expression_input_box = self.setup_expression_input()
-        self.back_button = self.setup_back_button()
+        self.back_button = gui.create_back_button()
         self.char_buttons = self.setup_char_buttons()
         self.background_rect = self.setup_background_rect()
 
@@ -51,11 +51,6 @@ class CalculatorMenu:
         expression_input_box.set_font_size(CalculatorMenu.EXPRESSION_FONT_SIZE)
 
         return expression_input_box
-    
-    def setup_back_button(self):
-        back_button = gui.ColourChangeButton(gui.BACK_BUTTON_POS, gui.BACK_BUTTON_WIDTH, gui.BACK_BUTTON_HEIGHT, "<-")
-
-        return back_button
     
     def setup_char_buttons(self):
         total_row_width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.CHAR_BUTTON_TOP_LEFT[0]
