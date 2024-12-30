@@ -29,39 +29,46 @@ class MainMenu:
     BUTTON_PADDING_X = 10  #distance between each mode button in the grid
     BUTTON_PADDING_Y = 10  #distance between each mode button in the grid
 
-    BUTTON_GRID_TOP_LEFT = (30, gui.SCREEN_HEIGHT // 2)
-
     def __init__(self, window):
         self.window = window
 
-        #self.mode_buttons is a 2D array of gui.ColourChangeButton objects that match up with each mode from MODE_NAMES and MODE_CLICK_EVENTS
-        self.all_gui_elements, self.mode_buttons = self.setup_gui()
+        self.heading_text = self.setup_heading_text()
+        self.mode_buttons = self.setup_mode_buttons()
 
-    def setup_gui(self):
-        #initialise all of the gui elements present in the main menu
-        all_gui_elements = []
-
+    def setup_heading_text(self):
         heading_text = gui.DisplayText("Calculator Modes", gui.HEADING_CENTER_POS)
         heading_text.set_font_size(gui.HEADING_FONT_SIZE)
 
-        all_gui_elements.append(heading_text)
+        return heading_text
+    
+    def calculate_grid_top_left(self):
+        top_left_y = gui.SCREEN_HEIGHT // 2
 
-        #create the mode buttons grid
+        buttons_per_row = len(MainMenu.MODE_NAMES[0])
+        total_row_width = MainMenu.BUTTON_WIDTH * buttons_per_row + MainMenu.BUTTON_PADDING_X * (buttons_per_row - 1)
+        empty_width = gui.SCREEN_WIDTH - total_row_width
+
+        top_left_x = empty_width // 2  #ensure grid is centered
+
+        return (top_left_x, top_left_y)
+
+    def setup_mode_buttons(self):
+        top_left_x, top_left_y = self.calculate_grid_top_left()
+
         mode_buttons = [[None for _ in i] for i in MainMenu.MODE_NAMES]  #create a blank 2D array to store the mode buttons
 
         for grid_y in range(len(mode_buttons)):
             for grid_x in range(len(mode_buttons[grid_y])):
                 mode_name = MainMenu.MODE_NAMES[grid_y][grid_x]
 
-                button_top_left_x = MainMenu.BUTTON_GRID_TOP_LEFT[0] + (MainMenu.BUTTON_WIDTH + MainMenu.BUTTON_PADDING_X) * grid_x
-                button_top_left_y = MainMenu.BUTTON_GRID_TOP_LEFT[1] + (MainMenu.BUTTON_HEIGHT + MainMenu.BUTTON_PADDING_Y) * grid_y
+                button_top_left_x = top_left_x + (MainMenu.BUTTON_WIDTH + MainMenu.BUTTON_PADDING_X) * grid_x
+                button_top_left_y = top_left_y + (MainMenu.BUTTON_HEIGHT + MainMenu.BUTTON_PADDING_Y) * grid_y
 
                 button = gui.ColourChangeButton((button_top_left_x, button_top_left_y), MainMenu.BUTTON_WIDTH, MainMenu.BUTTON_HEIGHT, mode_name)
 
-                mode_buttons[grid_y][grid_x] = button  #add the button to the mode buttons
-                all_gui_elements.append(button)        #also add the button to the list of all gui elements
+                mode_buttons[grid_y][grid_x] = button
 
-        return all_gui_elements, mode_buttons
+        return mode_buttons
 
     def check_user_input(self):
         #loop through all of the buttons to check if the user has clicked any
@@ -75,8 +82,11 @@ class MainMenu:
     def draw(self):        
         self.window.fill(gui.BACKGROUND_COLOUR)
 
-        for element in self.all_gui_elements:
-            element.draw(self.window)
+        self.heading_text.draw(self.window)
+
+        for button_row in self.mode_buttons:
+            for button in button_row:
+                button.draw(self.window)
 
         pygame.display.update()
 
