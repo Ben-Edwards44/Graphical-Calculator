@@ -239,6 +239,10 @@ class TextInput:
         else:
             self.can_update_selected = True  #user has stopped clicking, so we should update self.selected next time they click
 
+            if pygame.mouse.get_pressed()[0]:
+                #user has clicked somewhere else, so we no longer want this text input to be selected
+                self.selected = False
+
     def input_text(self, inputted_text):
         self.inputted_text += inputted_text
 
