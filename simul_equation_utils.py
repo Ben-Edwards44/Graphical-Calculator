@@ -1,28 +1,21 @@
 import matrix_utils
 
 
-class LinearEquation:
-    def __init__(self, unknown_coefficients, constant):
-        self.unknown_coefficients = unknown_coefficients
-        self.constant = constant
-
-
 class SystemEquations:
-    def __init__(self, equations):
-        self.equations = equations
+    def __init__(self, equation_variables, equation_constants):
+        self.equation_variables = equation_variables
+        self.equation_constants = equation_constants
 
     def build_constant_matrix(self):
-        constant_matrix_items = [[equation.constant] for equation in self.equations]
+        constant_matrix_items = [[constant] for constant in self.equation_constants]
         matrix_object = matrix_utils.Matrix(constant_matrix_items)
 
         return matrix_object
 
     def build_coefficient_matrix(self):
         coefficient_matrix_items = []
-        for equation in self.equations:
-            coefficient_row = equation.unknown_coefficients
-
-            coefficient_matrix_items.append(coefficient_row)
+        for variables in self.equation_variables:
+            coefficient_matrix_items.append(variables)
 
         matrix_object = matrix_utils.SquareMatrix(coefficient_matrix_items)
 
