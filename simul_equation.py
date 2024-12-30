@@ -4,6 +4,7 @@ import calculator_utils
 import simul_equation_utils
 
 
+DIGITS = "0123456789"
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 
@@ -14,18 +15,27 @@ class SimulEquationMenu:
     SOLVE_BUTTON_WIDTH = 80
     SOLVE_BUTTON_HEIGHT = 50
 
+    NUM_EQUATION_TOP_LEFT = (410, 20)
+    NUM_EQUATION_WIDTH = 80
+    NUM_EQUATION_HEIGHT = 50
 
     def __init__(self, window):
         self.window = window
 
         self.solve_button = self.setup_solve_button()
-        
-        self.equations = self.create_equations(3)
+        self.num_equation_input = self.setup_num_equation_input()
 
+        self.equations = self.create_equations(3)
+        
     def setup_solve_button(self):
         solve_button = gui.ColourChangeButton(SimulEquationMenu.SOLVE_BUTTON_TOP_LEFT, SimulEquationMenu.SOLVE_BUTTON_WIDTH, SimulEquationMenu.SOLVE_BUTTON_HEIGHT, "Solve")
 
         return solve_button
+    
+    def setup_num_equation_input(self):
+        num_equation_input = gui.TextInput(SimulEquationMenu.NUM_EQUATION_TOP_LEFT, SimulEquationMenu.NUM_EQUATION_WIDTH, SimulEquationMenu.NUM_EQUATION_HEIGHT, "Num equations:")
+
+        return num_equation_input
 
     def create_equations(self, num_equations):
         #the number of variables in each equation is the same as the number of equations
@@ -45,17 +55,35 @@ class SimulEquationMenu:
         solutions = equation_system.solve()
 
         print(solutions)
+
+    def update_num_equations(self):
+        self.num_equation_input.check_user_input()
+        new_num_equations = self.num_equation_input.get_inputted_text()
+
+        is_int = True
+        for i in new_num_equations:
+            if i not in DIGITS: is_int = False
+
+        if len(new_num_equations) > 0 and is_int:
+            num_equations = int(new_num_equations)
+            
+            if num_equations != len(self.equations):
+                #user wants a different number of equations
+                self.equations = self.create_equations(num_equations)
     
     def check_user_input(self):
         for equation in self.equations:
             equation.check_user_input()
 
         if self.solve_button.is_clicked(): self.solve_equations()
-    
+
+        self.update_num_equations()
+
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
 
         self.solve_button.draw(self.window)
+        self.num_equation_input.draw(self.window)
 
         for equation in self.equations:
             equation.draw()
