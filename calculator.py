@@ -161,13 +161,11 @@ class ExpressionBox:
         self.window = window
         self.expression_string = expression_string
 
-        self.expression = calculator_utils.InfixExpression(expression_string)
-
         self.answer_string = self.evaluate_expression()
 
     def evaluate_expression(self):
         try:
-            answer = self.expression.evaluate()
+            answer = calculator_utils.evaluate_expression(self.expression_string)
             answer_string = str(answer)
         except:
             #the user has entered an invalid expression: an error will be displayed

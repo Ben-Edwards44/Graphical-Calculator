@@ -215,3 +215,10 @@ class InfixExpression:
         final_result = evaluate_stack.pop()  #evaluation will be only item left in the stack
 
         return final_result
+    
+
+def evaluate_expression(expression):
+    expression_object = InfixExpression(expression)
+    result = expression_object.evaluate()
+
+    return result
