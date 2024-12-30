@@ -5,28 +5,31 @@ import matrix
 import grapher
 import equation
 import calculator
+import simul_equation
 
 
 class MainMenu:
     #specifies the names of the modes as well as the order in which the buttons appear
     MODE_NAMES = [
         ["Calculator", "2D grapher"],
-        ["Equation", "Matrix"]
+        ["Equation", "Simul Equation"],
+        ["Matrix"]
     ]
 
     #the functions called when the corresponding mode button is clicked - needs to match up with MODE_NAMES
     MODE_CLICK_EVENTS = [
         [calculator.main, grapher.main],
-        [equation.main, matrix.main]
+        [equation.main, simul_equation.main],
+        [matrix.main]
     ]
 
-    BUTTON_WIDTH = 200
+    BUTTON_WIDTH = 220
     BUTTON_HEIGHT = 50
 
     BUTTON_PADDING_X = 10  #distance between each mode button in the grid
     BUTTON_PADDING_Y = 10  #distance between each mode button in the grid
 
-    BUTTON_GRID_TOP_LEFT = (50, gui.SCREEN_HEIGHT // 2)
+    BUTTON_GRID_TOP_LEFT = (30, gui.SCREEN_HEIGHT // 2)
 
     def __init__(self, window):
         self.window = window
