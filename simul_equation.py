@@ -13,6 +13,8 @@ class SimulEquationMenu:
     SOLVE_BUTTON_WIDTH = 80
     SOLVE_BUTTON_HEIGHT = 50
 
+    START_NUM_EQUATIONS = 3
+
     NUM_EQUATION_TOP_LEFT = (500, 20)
     NUM_EQUATION_WIDTH = 80
     NUM_EQUATION_HEIGHT = 50
@@ -29,7 +31,7 @@ class SimulEquationMenu:
         self.num_equation_input = self.setup_num_equation_input()
         self.solution_text = self.setup_solution_text()
 
-        self.equations = self.create_equations(3)
+        self.equations = self.create_equations(SimulEquationMenu.START_NUM_EQUATIONS)
         
     def setup_solve_button(self):
         solve_button = gui.ColourChangeButton(SimulEquationMenu.SOLVE_BUTTON_TOP_LEFT, SimulEquationMenu.SOLVE_BUTTON_WIDTH, SimulEquationMenu.SOLVE_BUTTON_HEIGHT, "Solve")
@@ -60,7 +62,12 @@ class SimulEquationMenu:
     def display_solutions(self, solutions):
         solution_text = ""
         for variable, solution in zip(ALPHABET, solutions):
-            solution_text += f"{variable} = {solution} "
+            solution_text += f"{variable} = {solution}"
+
+            is_final_solution = variable == ALPHABET[len(solutions) - 1]
+            if not is_final_solution:
+                #we only want to add a comma if this is the last solution in the list
+                solution_text += ", "
 
         self.solution_text.set_displayed_text(solution_text)
         self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)  #the displayed text may have changed length, so we need to re-position the text
