@@ -184,13 +184,13 @@ class DisplayText:
 
         self.center_pos = (new_center_x, new_center_y)
 
-    def set_top_right_pos(self, new_top_left_pos):
-        #we need to convert the top left pos into a center pos
+    def set_top_right_pos(self, new_top_right_pos):
+        #we need to convert the top right pos into a center pos
         text_surface = self.font.render(self.displayed_text, False, self.font_colour)
         text_rect = text_surface.get_rect()
 
-        new_center_x = new_top_left_pos[0] - text_rect.width // 2
-        new_center_y = new_top_left_pos[1] + text_rect.height // 2
+        new_center_x = new_top_right_pos[0] - text_rect.width // 2
+        new_center_y = new_top_right_pos[1] + text_rect.height // 2
 
         self.center_pos = (new_center_x, new_center_y)
 

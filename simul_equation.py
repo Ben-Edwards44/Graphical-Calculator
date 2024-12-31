@@ -17,6 +17,8 @@ class SimulEquationMenu:
     NUM_EQUATION_WIDTH = 80
     NUM_EQUATION_HEIGHT = 50
 
+    SOLUTION_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 50)
+
     def __init__(self, window):
         self.window = window
 
@@ -25,6 +27,7 @@ class SimulEquationMenu:
         self.solve_button = self.setup_solve_button()
         self.back_button = gui.create_back_button()
         self.num_equation_input = self.setup_num_equation_input()
+        self.solution_text = self.setup_solution_text()
 
         self.equations = self.create_equations(3)
         
@@ -37,6 +40,12 @@ class SimulEquationMenu:
         num_equation_input = gui.TextInput(SimulEquationMenu.NUM_EQUATION_TOP_LEFT, SimulEquationMenu.NUM_EQUATION_WIDTH, SimulEquationMenu.NUM_EQUATION_HEIGHT, "Num equations:")
 
         return num_equation_input
+    
+    def setup_solution_text(self):
+        solution_text = gui.DisplayText("", (0, 0))
+        solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)
+
+        return solution_text
 
     def create_equations(self, num_equations):
         #the number of variables in each equation is the same as the number of equations
@@ -48,6 +57,14 @@ class SimulEquationMenu:
 
         return equations
     
+    def display_solutions(self, solutions):
+        solution_text = ""
+        for variable, solution in zip(ALPHABET, solutions):
+            solution_text += f"{variable} = {solution} "
+
+        self.solution_text.set_displayed_text(solution_text)
+        self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)  #the displayed text may have changed length, so we need to re-position the text
+    
     def solve_equations(self):
         equation_variables = [equation.get_variable_coefficients() for equation in self.equations]
         equation_constants = [equation.get_constant() for equation in self.equations]
@@ -55,7 +72,7 @@ class SimulEquationMenu:
         equation_system = simul_equation_utils.SystemEquations(equation_variables, equation_constants)
         solutions = equation_system.solve()
 
-        print(solutions)
+        self.display_solutions(solutions)
 
     def update_num_equations(self):
         self.num_equation_input.check_user_input()
@@ -87,6 +104,7 @@ class SimulEquationMenu:
         self.solve_button.draw(self.window)
         self.back_button.draw(self.window)
         self.num_equation_input.draw(self.window)
+        self.solution_text.draw(self.window)
 
         for equation in self.equations:
             equation.draw()
