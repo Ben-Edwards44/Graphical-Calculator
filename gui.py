@@ -285,6 +285,17 @@ def create_back_button():
     return back_button
 
 
+def calculate_centered_top_left(width, height):
+    #calculate the top left position of an object such that it lies in the center of the screen
+    empty_space_x = SCREEN_WIDTH - width
+    empty_space_y = SCREEN_HEIGHT - height
+
+    top_left_x = empty_space_x // 2
+    top_left_y = empty_space_y // 2
+
+    return top_left_x, top_left_y
+
+
 def check_user_quit():
     #check whether the user has pressed the quit button in the top right of the window
     quit_events = pygame.event.get(pygame.QUIT)

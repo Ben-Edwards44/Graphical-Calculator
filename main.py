@@ -42,15 +42,15 @@ class MainMenu:
         return heading_text
     
     def calculate_grid_top_left(self):
-        top_left_y = gui.SCREEN_HEIGHT // 2
-
         buttons_per_row = len(MainMenu.MODE_NAMES[0])
-        total_row_width = MainMenu.BUTTON_WIDTH * buttons_per_row + MainMenu.BUTTON_PADDING_X * (buttons_per_row - 1)
-        empty_width = gui.SCREEN_WIDTH - total_row_width
+        total_width = MainMenu.BUTTON_WIDTH * buttons_per_row + MainMenu.BUTTON_PADDING_X * (buttons_per_row - 1)
 
-        top_left_x = empty_width // 2  #ensure grid is centered
+        buttons_per_col = len(MainMenu.MODE_NAMES)
+        total_height = MainMenu.BUTTON_HEIGHT * buttons_per_col + MainMenu.BUTTON_PADDING_Y * (buttons_per_col - 1)
 
-        return (top_left_x, top_left_y)
+        top_left = gui.calculate_centered_top_left(total_width, total_height)
+
+        return top_left
 
     def setup_mode_buttons(self):
         top_left_x, top_left_y = self.calculate_grid_top_left()
