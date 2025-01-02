@@ -59,16 +59,16 @@ class DefinedMatrix:
         return input_grid
     
     def setup_button_row(self):
-        total_width = 3 * DefinedMatrix.BUTTON_WIDTH + 2 * DefinedMatrix.BUTTON_PADDING_X
-
-        top_left_x, _ = gui.calculate_centered_top_left(total_width, DefinedMatrix.BUTTON_HEIGHT)
-        top_left_y = DefinedMatrix.BUTTON_PADDING_Y
+        #the buttons are centered vertically, but placed DefinedMatrix.BUTTON_PADDING_X away from the left of the screen
+        total_height = 3 * DefinedMatrix.BUTTON_HEIGHT + 2 * DefinedMatrix.BUTTON_PADDING_Y
+        _, top_left_y = gui.calculate_centered_top_left(DefinedMatrix.BUTTON_WIDTH, total_height)
+        top_left_x = DefinedMatrix.BUTTON_PADDING_X
         
-        x_step = DefinedMatrix.BUTTON_WIDTH + DefinedMatrix.BUTTON_PADDING_X
+        y_step = DefinedMatrix.BUTTON_HEIGHT + DefinedMatrix.BUTTON_PADDING_Y
 
         width_input = gui.TextInput((top_left_x, top_left_y), DefinedMatrix.BUTTON_WIDTH, DefinedMatrix.BUTTON_HEIGHT, "Enter width:")
-        height_input = gui.TextInput((top_left_x + x_step, top_left_y), DefinedMatrix.BUTTON_WIDTH, DefinedMatrix.BUTTON_HEIGHT, "Enter height:")
-        done_button = gui.ColourChangeButton((top_left_x + 2 * x_step, top_left_y), DefinedMatrix.BUTTON_WIDTH, DefinedMatrix.BUTTON_HEIGHT, "done")
+        height_input = gui.TextInput((top_left_x, top_left_y + y_step), DefinedMatrix.BUTTON_WIDTH, DefinedMatrix.BUTTON_HEIGHT, "Enter height:")
+        done_button = gui.ColourChangeButton((top_left_x, top_left_y + 2 * y_step), DefinedMatrix.BUTTON_WIDTH, DefinedMatrix.BUTTON_HEIGHT, "done")
 
         return width_input, height_input, done_button
     
