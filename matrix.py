@@ -42,7 +42,7 @@ class DefinedMatrix:
 
         self.input_grid = self.setup_input_grid()
         self.name_text = self.setup_name_text()
-        self.width_input, self.height_input, self.done_button = self.setup_button_row()
+        self.width_input, self.height_input, self.done_button = self.setup_button_col()
 
     def setup_input_grid(self):
         input_grid = [[None for _ in range(self.width)] for _ in range(self.height)]  #blank 2d array
@@ -58,7 +58,7 @@ class DefinedMatrix:
 
         return input_grid
     
-    def setup_button_row(self):
+    def setup_button_col(self):
         #the buttons are centered vertically, but placed DefinedMatrix.BUTTON_PADDING_X away from the left of the screen
         total_height = 3 * DefinedMatrix.BUTTON_HEIGHT + 2 * DefinedMatrix.BUTTON_PADDING_Y
         _, top_left_y = gui.calculate_centered_top_left(DefinedMatrix.BUTTON_WIDTH, total_height)
