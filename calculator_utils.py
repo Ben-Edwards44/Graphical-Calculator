@@ -139,7 +139,26 @@ class InfixExpression:
         tokens.append(current_token)  #add the final token
 
         return tokens
-        
+    
+    def detect_unary_minus(self, tokenised_expression):
+        #detect any unary minus operators and place a 0 before them
+        for token_inx, token in enumerate(tokenised_expression):
+            if token.is_operator() and token.string == "-":
+                if token_inx > 0:
+                    prev_token = tokenised_expression[token_inx - 1]
+                    is_unary = prev_token.is_operator() or prev_token.is_open_bracket()
+                else:
+                    is_unary = True
+
+                if is_unary:
+                    #the number -12 is the same as 0-12, therefore placing a 0 before the unary minus will ensure it is evaluated correctly
+                    zero_token = Token()
+                    zero_token.add_char("0")
+
+                    tokenised_expression.insert(token_inx, zero_token)
+
+        return tokenised_expression
+
     def covert_to_postfix(self, tokenised_expression):
         #use the Shunting Yard algorithm to return postfix expression of tokens
         tokenised_postfix = []
@@ -191,6 +210,7 @@ class InfixExpression:
     
     def evaluate(self):
         tokenised_infix = self.tokenise()
+        tokenised_infix = self.detect_unary_minus(tokenised_infix)
         tokenised_postfix = self.covert_to_postfix(tokenised_infix)
 
         evaluate_stack = Stack()
