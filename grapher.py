@@ -4,7 +4,12 @@ import calculator_utils
 
 
 class Axis:
-    def __init__(self, min_x, max_x, min_y, max_y):
+    MAIN_AXIS_COLOUR = (0, 255, 0)
+    MAIN_AXIS_WIDTH = 4
+
+    def __init__(self, window, min_x, max_x, min_y, max_y):
+        self.window = window
+
         self.min_x = min_x
         self.max_x = max_x
         self.min_y = min_y
@@ -20,6 +25,15 @@ class Axis:
         pixel_width = self.width / gui.SCREEN_WIDTH
 
         return pixel_width
+
+    def axis_x_to_pixel_x(self, axis_x):
+        #convert an x coordinate on the axis to a pixel x coordinate on the pygame window
+        fraction_along = (axis_x - self.min_x) / self.width
+        scaled_x = fraction_along * gui.SCREEN_WIDTH
+
+        pixel_x = int(scaled_x)
+
+        return pixel_x
 
     def axis_y_to_pixel_y(self, axis_y):
         #convert a y coordinate on the axis to a pixel y coordinate on the pygame window
@@ -37,6 +51,26 @@ class Axis:
         axis_x = self.min_x + fraction_along * self.width
 
         return axis_x
+    
+    def draw_x_axis(self):
+        #draw the x axis if it lies between self.min_x and self.max_x
+        if 0 < self.min_x or 0 > self.max_x: return
+
+        origin_x = self.axis_x_to_pixel_x(0)
+
+        pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (origin_x, 0), (origin_x, gui.SCREEN_HEIGHT), Axis.MAIN_AXIS_WIDTH)
+
+    def draw_y_axis(self):
+        #draw the y axis if it lies between self.min_y and self.max_y
+        if 0 < self.min_y or 0 > self.max_y: return
+
+        origin_y = self.axis_y_to_pixel_y(0)
+
+        pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (0, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
+
+    def draw(self):
+        self.draw_x_axis()
+        self.draw_y_axis()
 
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines
@@ -93,10 +127,11 @@ class ExplicitGraph(Graph):
 
 
 def main(window):
-    a = Axis(-10, 10, -10, 10)
+    a = Axis(window, -10, 10, -10, 10)
     temp = ExplicitGraph(window, "y=sin(x^3)", a)
 
     window.fill((0, 0, 0))
+    a.draw()
     temp.draw()
     pygame.display.update()
 
