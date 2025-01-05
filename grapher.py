@@ -74,7 +74,7 @@ class Axis:
 
         pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (0, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
 
-    def calculate_line_spacing(self, min, max, screen_space):
+    def calculate_line_spacing(self, min, max):
         #choose the spacing of the background lines such that the number is as close to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
         axis_space = max - min
         desired_axis_spacing = axis_space / Axis.DESIRED_NUM_BACKGROUND_LINES
@@ -95,8 +95,9 @@ class Axis:
         return axis_spacing
     
     def calculate_start_point(self, axis_spacing, ideal_start):
-        threshold_steps = abs(ideal_start) / axis_spacing
-        steps = int(threshold_steps) + 1  #go one past the threshold
+        #calculate the position of the first background line to be drawn
+        threshold_steps = abs(ideal_start) / axis_spacing  #this is the number of axis_spacing steps we need to take to get from the origin to the ideal_start point
+        steps = int(threshold_steps) + 1  #go one past the threshold to ensure all lines are drawn
 
         start_point = steps * axis_spacing
 
@@ -105,7 +106,7 @@ class Axis:
         return start_point
 
     def draw_vertical_background_lines(self):
-        axis_spacing = self.calculate_line_spacing(self.min_x, self.max_x, gui.SCREEN_WIDTH)
+        axis_spacing = self.calculate_line_spacing(self.min_x, self.max_x)
 
         #draw lines from left to right
         line_axis_x = self.calculate_start_point(axis_spacing, self.min_x)
@@ -116,7 +117,7 @@ class Axis:
             line_axis_x += axis_spacing
 
     def draw_horizontal_background_lines(self):
-        axis_spacing = self.calculate_line_spacing(self.min_y, self.max_y, gui.SCREEN_HEIGHT)
+        axis_spacing = self.calculate_line_spacing(self.min_y, self.max_y)
 
         #draw lines from top to bottom
         line_axis_y = self.calculate_start_point(axis_spacing, self.max_y)
@@ -134,7 +135,7 @@ class Axis:
         self.draw_vertical_background_lines()
 
 
-#NOTE: do dry run of graph drawing algorithms - points vs lines
+#NOTE: do dry run of graph drawing algorithms - points vs lines (good continuity vs not right for discontinuous curves)
 class Graph:
     RESOLUTION = 5  #how many x value samples taken per pixel
 
