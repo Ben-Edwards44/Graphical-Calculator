@@ -166,15 +166,10 @@ class InfixExpression:
 
             prev_token = tokenised_expression[token_inx - 1]
 
-            implied_mult = False
-            if token.is_open_bracket() and not prev_token.is_operator() and not prev_token.is_function():
-                #this is an implied multiplication with an open bracket like 2(1+4)
-                implied_mult = True
-            elif token.is_function() and not prev_token.is_operator() and not prev_token.is_open_bracket():
-                #this is an implied multiplication with a function like 4cos(5)
-                implied_mult = True
+            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket()
+            current_can_be_implied = token.is_open_bracket() or token.is_function()
 
-            if implied_mult:
+            if prev_can_be_implied and current_can_be_implied:
                 #insert a multiplication token to make the multiplication explicit
                 mult_token = Token()
                 mult_token.add_char("*")
