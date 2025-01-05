@@ -1,4 +1,5 @@
 import gui
+import math
 import pygame
 import calculator_utils
 
@@ -6,6 +7,11 @@ import calculator_utils
 class Axis:
     MAIN_AXIS_COLOUR = (0, 255, 0)
     MAIN_AXIS_WIDTH = 4
+
+    BACKGROUND_LINE_COLOUR = (0, 0, 255)
+    BACKGROUND_LINE_WIDTH = 2
+
+    DESIRED_NUM_BACKGROUND_LINES = 10
 
     def __init__(self, window, min_x, max_x, min_y, max_y):
         self.window = window
@@ -68,14 +74,59 @@ class Axis:
 
         pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (0, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
 
+    def calculate_line_spacing(self, min, max, screen_space):
+        #choose the spacing of the background lines such that the number is as close to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
+        axis_space = max - min
+        desired_axis_spacing = axis_space / Axis.DESIRED_NUM_BACKGROUND_LINES
+
+        #choose the nearest power of 10 to the desired axis spacing
+        current_power = math.log(desired_axis_spacing, 10)
+        lower = 10**int(current_power)
+        upper = 10**(int(current_power) + 1)
+
+        diff_lower = desired_axis_spacing - lower
+        diff_upper = upper - desired_axis_spacing
+
+        if diff_lower < diff_upper:
+            axis_spacing = lower
+        else:
+            axis_spacing = upper
+        
+        screen_spacing = int(axis_spacing * (screen_space / axis_space))  #scale the axis spacing up to the screen spacing
+
+        return screen_spacing
+
+    def draw_vertical_background_lines(self):
+        spacing = self.calculate_line_spacing(self.min_x, self.max_x, gui.SCREEN_WIDTH)
+
+        #BUG: should not start from min_x. Should start from origin
+        line_x = self.axis_x_to_pixel_x(int(self.min_x) + 1)
+        while line_x < gui.SCREEN_WIDTH:
+            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (line_x, 0), (line_x, gui.SCREEN_HEIGHT), Axis.BACKGROUND_LINE_WIDTH)
+
+            line_x += spacing
+
+    def draw_horizontal_background_lines(self):
+        spacing = self.calculate_line_spacing(self.min_y, self.max_y, gui.SCREEN_HEIGHT)
+
+        #BUG: should not start from min_y. Should start from origin
+        line_y = self.axis_y_to_pixel_y(int(self.max_y) - 1)
+        while line_y < gui.SCREEN_HEIGHT:
+            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (0, line_y), (gui.SCREEN_WIDTH, line_y), Axis.BACKGROUND_LINE_WIDTH)
+
+            line_y += spacing
+
     def draw(self):
         self.draw_x_axis()
         self.draw_y_axis()
 
+        self.draw_horizontal_background_lines()
+        self.draw_vertical_background_lines()
+
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines
 class Graph:
-    RESOLUTION = 5  #how many x value samples are taken per pixel
+    RESOLUTION = 5  #how many x value samples taken per pixel
 
     def __init__(self, window, equation_string, axis):
         self.window = window
