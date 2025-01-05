@@ -92,29 +92,39 @@ class Axis:
         else:
             axis_spacing = upper
         
-        screen_spacing = int(axis_spacing * (screen_space / axis_space))  #scale the axis spacing up to the screen spacing
+        return axis_spacing
+    
+    def calculate_start_point(self, axis_spacing, ideal_start):
+        threshold_steps = abs(ideal_start) / axis_spacing
+        steps = int(threshold_steps) + 1  #go one past the threshold
 
-        return screen_spacing
+        start_point = steps * axis_spacing
+
+        if ideal_start < 0: start_point *= -1  #we actually want to start in the other direction
+
+        return start_point
 
     def draw_vertical_background_lines(self):
-        spacing = self.calculate_line_spacing(self.min_x, self.max_x, gui.SCREEN_WIDTH)
+        axis_spacing = self.calculate_line_spacing(self.min_x, self.max_x, gui.SCREEN_WIDTH)
 
-        #BUG: should not start from min_x. Should start from origin
-        line_x = self.axis_x_to_pixel_x(int(self.min_x) + 1)
-        while line_x < gui.SCREEN_WIDTH:
-            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (line_x, 0), (line_x, gui.SCREEN_HEIGHT), Axis.BACKGROUND_LINE_WIDTH)
+        #draw lines from left to right
+        line_axis_x = self.calculate_start_point(axis_spacing, self.min_x)
+        while line_axis_x <= self.max_x:
+            line_pixel_x = self.axis_x_to_pixel_x(line_axis_x)
+            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (line_pixel_x, 0), (line_pixel_x, gui.SCREEN_HEIGHT), Axis.BACKGROUND_LINE_WIDTH)
 
-            line_x += spacing
+            line_axis_x += axis_spacing
 
     def draw_horizontal_background_lines(self):
-        spacing = self.calculate_line_spacing(self.min_y, self.max_y, gui.SCREEN_HEIGHT)
+        axis_spacing = self.calculate_line_spacing(self.min_y, self.max_y, gui.SCREEN_HEIGHT)
 
-        #BUG: should not start from min_y. Should start from origin
-        line_y = self.axis_y_to_pixel_y(int(self.max_y) - 1)
-        while line_y < gui.SCREEN_HEIGHT:
-            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (0, line_y), (gui.SCREEN_WIDTH, line_y), Axis.BACKGROUND_LINE_WIDTH)
+        #draw lines from top to bottom
+        line_axis_y = self.calculate_start_point(axis_spacing, self.max_y)
+        while line_axis_y >= self.min_y:
+            line_pixel_y = self.axis_y_to_pixel_y(line_axis_y)
+            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (0, line_pixel_y), (gui.SCREEN_WIDTH, line_pixel_y), Axis.BACKGROUND_LINE_WIDTH)
 
-            line_y += spacing
+            line_axis_y -= axis_spacing
 
     def draw(self):
         self.draw_x_axis()
@@ -178,7 +188,7 @@ class ExplicitGraph(Graph):
 
 
 def main(window):
-    a = Axis(window, -10, 10, -10, 10)
+    a = Axis(window, -80, 10, -10, 3.5)
     temp = ExplicitGraph(window, "y=sin(x^3)", a)
 
     window.fill((0, 0, 0))
