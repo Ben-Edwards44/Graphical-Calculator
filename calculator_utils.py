@@ -158,6 +158,30 @@ class InfixExpression:
                     tokenised_expression.insert(token_inx, zero_token)
 
         return tokenised_expression
+    
+    def detect_implied_multiplication(self, tokenised_expression):
+        #detect if the expression is (1+2)(3+4) instead of (1+2)*(3+4), or 2sin(5) instead of 2*sin(5)
+        for token_inx, token in enumerate(tokenised_expression):
+            if token_inx == 0: continue  #the first token can never be an implied multiplication
+
+            prev_token = tokenised_expression[token_inx - 1]
+
+            implied_mult = False
+            if token.is_open_bracket() and not prev_token.is_operator() and not prev_token.is_function():
+                #this is an implied multiplication with an open bracket like 2(1+4)
+                implied_mult = True
+            elif token.is_function() and not prev_token.is_operator() and not prev_token.is_open_bracket():
+                #this is an implied multiplication with a function like 4cos(5)
+                implied_mult = True
+
+            if implied_mult:
+                #insert a multiplication token to make the multiplication explicit
+                mult_token = Token()
+                mult_token.add_char("*")
+
+                tokenised_expression.insert(token_inx, mult_token)
+
+        return tokenised_expression
 
     def covert_to_postfix(self, tokenised_expression):
         #use the Shunting Yard algorithm to return postfix expression of tokens
@@ -210,7 +234,10 @@ class InfixExpression:
     
     def evaluate(self):
         tokenised_infix = self.tokenise()
+        
         tokenised_infix = self.detect_unary_minus(tokenised_infix)
+        tokenised_infix = self.detect_implied_multiplication(tokenised_infix)
+
         tokenised_postfix = self.covert_to_postfix(tokenised_infix)
 
         evaluate_stack = Stack()
