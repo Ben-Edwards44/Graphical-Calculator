@@ -13,94 +13,88 @@ class Axis:
         self.width = max_x - min_x
         self.height = max_y - min_y
 
-        self.tolerance = self.calculate_tolerance()
+        self.pixel_width = self.calculate_pixel_width()
 
-    def calculate_tolerance(self):
+    def calculate_pixel_width(self):
+        #calculate the amount of axis space taken up by one pixel - needed for sampling each pixel multiple times
         pixel_width = self.width / gui.SCREEN_WIDTH
-        pixel_height = self.height / gui.SCREEN_HEIGHT
 
-        diagonal_len = (pixel_width**2 + pixel_height**2)**0.5
+        return pixel_width
 
-        #tolerance should be half the length of the diagonal because this is the furthest point from the center of the pixel to another point in the pixel (its corner)
-        tolerance = diagonal_len / 2
+    def axis_y_to_pixel_y(self, axis_y):
+        #convert a y coordinate on the axis to a pixel y coordinate on the pygame window
+        fraction_up = (axis_y - self.min_y) / self.height
+        scaled_y = gui.SCREEN_HEIGHT * fraction_up
 
-        return tolerance
+        #pygame uses the top of the screen as 0, but the axis uses the bottom of the screen as 0 so we need to subtract scaled_y from the screen height
+        pixel_y = gui.SCREEN_HEIGHT - int(scaled_y)
 
-    def screen_to_axis_point(self, pixel_x, pixel_y):
-        #convert a pixel coordinate point to a point on the axis
-        corrected_pixel_y = gui.SCREEN_HEIGHT - pixel_y  #pygame uses the top of the screen as 0, but the axis uses the bottom of the screen as 0
-
+        return pixel_y
+    
+    def pixel_x_to_axis_x(self, pixel_x):
+        #convert a pixel x coordinate to an x coordinate on the axis - fraction_into_pixel specifes how far from the left of the pixel the coordinate should be
         fraction_along = pixel_x / gui.SCREEN_WIDTH
-        fraction_up = corrected_pixel_y / gui.SCREEN_HEIGHT
+        axis_x = self.min_x + fraction_along * self.width
 
-        x = self.min_x + self.width * fraction_along
-        y = self.min_y + self.height * fraction_up
-
-        return x, y
+        return axis_x
 
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines
 class Graph:
-    def __init__(self, window, axis, equation_string):
+    RESOLUTION = 5  #how many x value samples are taken per pixel
+
+    def __init__(self, window, equation_string, axis):
         self.window = window
-        self.axis = axis
         self.equation_string = equation_string
-        
-        self.left_expression, self.right_expression = self.extract_expression_sides()
+        self.axis = axis
 
-    def extract_expression_sides(self):
-        #get the expressions to the left and right hand side of the equals sign
-        left, right = self.equation_string.split("=")
-
-        return left, right
-
-    def replace_variables(self, x_value, y_value):
-        left = ""
-        for char in self.left_expression:
-            if char == "x":
-                left += f"({x_value})"
-            elif char == "y":
-                left += f"({y_value})"
-            else:
-                left += char
-
-        right = ""
-        for char in self.right_expression:
-            if char == "x":
-                right += f"({x_value})"
-            elif char == "y":
-                right += f"({y_value})"
-            else:
-                right += char
-
-        return left, right
-
-    def is_point_on_graph(self, x, y, tolerance):
-        left, right = self.replace_variables(x, y)
-
-        left_result = calculator_utils.evaluate_expression(left)
-        right_result = calculator_utils.evaluate_expression(right)
-        diff = abs(left_result - right_result)
-
-        return diff < tolerance
-    
     def draw(self):
         for pixel_x in range(gui.SCREEN_WIDTH):
-            for pixel_y in range(gui.SCREEN_HEIGHT):
-                axis_x, axis_y = self.axis.screen_to_axis_point(pixel_x, pixel_y)
+            axis_x = self.axis.pixel_x_to_axis_x(pixel_x)
 
-                if self.is_point_on_graph(axis_x, axis_y, self.axis.tolerance):
-                    pygame.draw.circle(self.window, (255, 0, 0), (pixel_x, pixel_y), 1)
+            for sample_num in range(Graph.RESOLUTION):
+                fraction_into_pixel = sample_num / Graph.RESOLUTION
+
+                x = axis_x + self.axis.pixel_width * fraction_into_pixel
+                y = self.get_y_value(x)
+
+                pixel_y = self.axis.axis_y_to_pixel_y(y)
+
+                pygame.draw.circle(self.window, (255, 0, 0), (pixel_x, pixel_y), 1)
+
+
+class ExplicitGraph(Graph):
+    def __init__(self, window, equation_string, axis):
+        super().__init__(window, equation_string, axis)
+
+        self.function = self.extract_function()
+
+    def extract_function(self):
+        #equation string will be in form y=f(x), we only want the f(x) part
+        _, func = self.equation_string.split("=")
+
+        return func
+    
+    def substitute_variables(self, x_value):
+        substituted_expression = ""
+        for char in self.function:
+            if char == "x":
+                substituted_expression += f"({x_value})"
+            else:
+                substituted_expression += char
+
+        return substituted_expression
+    
+    def get_y_value(self, x_value):
+        substituted_expression = self.substitute_variables(x_value)
+        y = calculator_utils.evaluate_expression(substituted_expression)
+
+        return y
 
 
 def main(window):
     a = Axis(-10, 10, -10, 10)
-    temp = Graph(window, a, "y=x^2")
-
-    print(a.screen_to_axis_point(0, 0))
-    print(a.screen_to_axis_point(gui.SCREEN_WIDTH, 0))
-    print(a.screen_to_axis_point(0, gui.SCREEN_HEIGHT))
-    print(a.screen_to_axis_point(gui.SCREEN_WIDTH, gui.SCREEN_HEIGHT))
+    temp = ExplicitGraph(window, "y=sin(x^3)", a)
 
     window.fill((0, 0, 0))
     temp.draw()
