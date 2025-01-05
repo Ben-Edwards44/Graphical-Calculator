@@ -5,6 +5,8 @@ import calculator_utils
 
 
 class Axis:
+    PIXEL_INDENT_X = 100
+
     MAIN_AXIS_COLOUR = (0, 255, 0)
     MAIN_AXIS_WIDTH = 4
 
@@ -28,16 +30,16 @@ class Axis:
 
     def calculate_pixel_width(self):
         #calculate the amount of axis space taken up by one pixel - needed for sampling each pixel multiple times
-        pixel_width = self.width / gui.SCREEN_WIDTH
+        pixel_width = self.width / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X)
 
         return pixel_width
 
     def axis_x_to_pixel_x(self, axis_x):
         #convert an x coordinate on the axis to a pixel x coordinate on the pygame window
         fraction_along = (axis_x - self.min_x) / self.width
-        scaled_x = fraction_along * gui.SCREEN_WIDTH
+        scaled_x = fraction_along * (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X)
 
-        pixel_x = int(scaled_x)
+        pixel_x = int(scaled_x) + Axis.PIXEL_INDENT_X
 
         return pixel_x
 
@@ -53,33 +55,35 @@ class Axis:
     
     def pixel_x_to_axis_x(self, pixel_x):
         #convert a pixel x coordinate to an x coordinate on the axis - fraction_into_pixel specifes how far from the left of the pixel the coordinate should be
-        fraction_along = pixel_x / gui.SCREEN_WIDTH
+        pixel_x -= Axis.PIXEL_INDENT_X
+        
+        fraction_along = pixel_x / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X)
         axis_x = self.min_x + fraction_along * self.width
 
         return axis_x
     
-    def draw_x_axis(self):
-        #draw the x axis if it lies between self.min_x and self.max_x
+    def draw_y_axis(self):
+        #draw the y axis if it lies between self.min_x and self.max_x
         if 0 < self.min_x or 0 > self.max_x: return
 
         origin_x = self.axis_x_to_pixel_x(0)
 
         pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (origin_x, 0), (origin_x, gui.SCREEN_HEIGHT), Axis.MAIN_AXIS_WIDTH)
 
-    def draw_y_axis(self):
-        #draw the y axis if it lies between self.min_y and self.max_y
+    def draw_x_axis(self):
+        #draw the x axis if it lies between self.min_y and self.max_y
         if 0 < self.min_y or 0 > self.max_y: return
 
         origin_y = self.axis_y_to_pixel_y(0)
 
-        pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (0, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
+        pygame.draw.line(self.window, Axis.MAIN_AXIS_COLOUR, (Axis.PIXEL_INDENT_X, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
 
     def calculate_line_spacing(self, min, max):
         #choose the spacing of the background lines such that the number is as close to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
         axis_space = max - min
         desired_axis_spacing = axis_space / Axis.DESIRED_NUM_BACKGROUND_LINES
 
-        #choose the nearest power of 10 to the desired axis spacing
+        #choose the nearest power of 10 to the desired axis spacing (because we want to go in steps of 1, 10, 100, 1000...)
         current_power = math.log(desired_axis_spacing, 10)
         lower = 10**int(current_power)
         upper = 10**(int(current_power) + 1)
@@ -97,7 +101,7 @@ class Axis:
     def calculate_start_point(self, axis_spacing, ideal_start):
         #calculate the position of the first background line to be drawn
         threshold_steps = abs(ideal_start) / axis_spacing  #this is the number of axis_spacing steps we need to take to get from the origin to the ideal_start point
-        steps = int(threshold_steps) + 1  #go one past the threshold to ensure all lines are drawn
+        steps = int(threshold_steps)
 
         start_point = steps * axis_spacing
 
@@ -123,7 +127,7 @@ class Axis:
         line_axis_y = self.calculate_start_point(axis_spacing, self.max_y)
         while line_axis_y >= self.min_y:
             line_pixel_y = self.axis_y_to_pixel_y(line_axis_y)
-            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (0, line_pixel_y), (gui.SCREEN_WIDTH, line_pixel_y), Axis.BACKGROUND_LINE_WIDTH)
+            pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (Axis.PIXEL_INDENT_X, line_pixel_y), (gui.SCREEN_WIDTH, line_pixel_y), Axis.BACKGROUND_LINE_WIDTH)
 
             line_axis_y -= axis_spacing
 
@@ -145,7 +149,7 @@ class Graph:
         self.axis = axis
 
     def draw(self):
-        for pixel_x in range(gui.SCREEN_WIDTH):
+        for pixel_x in range(Axis.PIXEL_INDENT_X, gui.SCREEN_WIDTH):
             axis_x = self.axis.pixel_x_to_axis_x(pixel_x)
 
             for sample_num in range(Graph.RESOLUTION):
@@ -189,8 +193,8 @@ class ExplicitGraph(Graph):
 
 
 def main(window):
-    a = Axis(window, -80, 10, -10, 3.5)
-    temp = ExplicitGraph(window, "y=sin(x^3)", a)
+    a = Axis(window, -1, 10, -10, 10)
+    temp = ExplicitGraph(window, "y=2x", a)
 
     window.fill((0, 0, 0))
     a.draw()
