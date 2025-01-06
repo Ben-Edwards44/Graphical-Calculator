@@ -5,13 +5,13 @@ import calculator_utils
 
 
 class Axis:
-    PIXEL_INDENT_X = 100
+    PIXEL_INDENT_X = 200
 
-    MAIN_AXIS_COLOUR = (0, 255, 0)
-    MAIN_AXIS_WIDTH = 4
+    MAIN_AXIS_COLOUR = (100, 100, 100)
+    MAIN_AXIS_WIDTH = 2
 
-    BACKGROUND_LINE_COLOUR = (0, 0, 255)
-    BACKGROUND_LINE_WIDTH = 2
+    BACKGROUND_LINE_COLOUR = (150, 150, 150)
+    BACKGROUND_LINE_WIDTH = 1
 
     DESIRED_NUM_BACKGROUND_LINES = 10
 
@@ -132,11 +132,11 @@ class Axis:
             line_axis_y -= axis_spacing
 
     def draw(self):
-        self.draw_x_axis()
-        self.draw_y_axis()
-
         self.draw_horizontal_background_lines()
         self.draw_vertical_background_lines()
+
+        self.draw_x_axis()
+        self.draw_y_axis()
 
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines (good continuity vs not right for discontinuous curves)
@@ -224,13 +224,16 @@ class GrapherMenu:
     GRAPH_COLOURS = (
         (255, 0, 0),
         (0, 255, 0),
-        (0, 0, 255)
+        (0, 0, 255),
+        (252, 219, 5),
+        (252, 5, 236),
+        (252, 120, 5)
     )
 
-    GRAPH_INPUT_WIDTH = 80
-
     GRAPH_INPUT_PADDING_X = 10
-    GRAPH_INPUT_PADDING_Y = 5
+    GRAPH_INPUT_PADDING_Y = 10
+
+    GRAPH_INPUT_WIDTH = Axis.PIXEL_INDENT_X - 2 * GRAPH_INPUT_PADDING_X
 
     def __init__(self, window):
         self.window = window
@@ -246,11 +249,11 @@ class GrapherMenu:
     def setup_graph_inputs(self):
         num_boxes = len(GrapherMenu.GRAPH_COLOURS)
 
-        box_height = (gui.SCREEN_HEIGHT - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes - 1)) // num_boxes
+        box_height = (gui.SCREEN_HEIGHT - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes + 1)) // num_boxes
 
         graph_inputs = []
         for i in range(num_boxes):
-            top_left_y = i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
+            top_left_y = GrapherMenu.GRAPH_INPUT_PADDING_Y + i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
             top_left = (GrapherMenu.GRAPH_INPUT_PADDING_X, top_left_y)
 
             input_box = gui.TextInput(top_left, GrapherMenu.GRAPH_INPUT_WIDTH, box_height, "...")
