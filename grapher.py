@@ -143,11 +143,12 @@ class Axis:
 class Graph:
     RESOLUTION = 5  #how many x value samples taken per pixel
 
-    def __init__(self, window, equation_string, axis, colour):
+    def __init__(self, window, axis, colour):
         self.window = window
-        self.equation_string = equation_string
         self.axis = axis
         self.colour = colour
+
+        self.equation_string = ""
 
     def set_equation_string(self, new_equation_string):
         self.been_drawn = False  #because we have updated the equation of the graph, we need to draw it again
@@ -181,6 +182,8 @@ class Graph:
         return substituted_expression
 
     def draw(self):
+        if self.equation_string == "": return  #graph equation has not yet been set
+
         for pixel_x in range(Axis.PIXEL_INDENT_X, gui.SCREEN_WIDTH):
             axis_x = self.axis.pixel_x_to_axis_x(pixel_x)
 
@@ -196,10 +199,10 @@ class Graph:
 
 
 class ExplicitGraph(Graph):
-    def __init__(self, window, equation_string, axis, colour):
-        super().__init__(window, equation_string, axis, colour)
+    def __init__(self, window, axis, colour):
+        super().__init__(window, axis, colour)
 
-        self.function = self.extract_function()
+        self.function = ""
 
     def set_equation_string(self, new_equation_string):
         #overrides Graph.set_equation_string()
@@ -209,6 +212,8 @@ class ExplicitGraph(Graph):
 
     def extract_function(self):
         #equation string will be in form y=f(x), we only want the f(x) part
+        if self.equation_string == "": return ""  #equation of graph has not yet been set
+
         _, func = self.equation_string.split("=")
 
         return func
@@ -238,11 +243,13 @@ class GrapherMenu:
     def __init__(self, window):
         self.window = window
 
+        self.go_back = False
         self.needs_redraw = True
 
         self.axis = self.setup_axis()
         self.graph_inputs = self.setup_graph_inputs()
         self.graphs = self.setup_graphs()
+        self.back_button = gui.create_back_button()
 
         self.redraw_entire_screen()  #we need to draw everything from scratch when the menu is first created
 
@@ -270,7 +277,7 @@ class GrapherMenu:
     def setup_graphs(self):
         graphs = []
         for colour in GrapherMenu.GRAPH_COLOURS:
-            graph = ExplicitGraph(self.window, "y=x", self.axis, colour)
+            graph = ExplicitGraph(self.window, self.axis, colour)
             graphs.append(graph)
 
         return graphs
@@ -287,6 +294,8 @@ class GrapherMenu:
                 self.needs_redraw = True  #because a graph has been changed, we must redraw the entire screen (including all graphs)
 
     def check_user_input(self):
+        if self.back_button.is_clicked(): self.go_back = True
+
         for input_box in self.graph_inputs:
             input_box.check_user_input()
 
@@ -315,12 +324,14 @@ class GrapherMenu:
         for input_box in self.graph_inputs:
             input_box.draw(self.window)
 
+        self.back_button.draw(self.window)
+
         pygame.display.update()
 
 def main(window):
     menu = GrapherMenu(window)
 
-    while True:
+    while not menu.go_back:
         menu.check_user_input()
         menu.draw()
 
