@@ -143,10 +143,42 @@ class Axis:
 class Graph:
     RESOLUTION = 5  #how many x value samples taken per pixel
 
-    def __init__(self, window, equation_string, axis):
+    def __init__(self, window, equation_string, axis, colour):
         self.window = window
         self.equation_string = equation_string
         self.axis = axis
+        self.colour = colour
+
+    def set_equation_string(self, new_equation_string):
+        self.been_drawn = False  #because we have updated the equation of the graph, we need to draw it again
+        self.equation_string = new_equation_string
+
+    def check_valid_equation(self, equation_string):
+        #check whether the graph's equation string is valid
+        prev_equation_string = self.equation_string
+
+        try:
+            self.set_equation_string(equation_string)
+            test_y = self.get_y_value(0)
+
+            valid = test_y is not None  #if a number is returned (not a None value), the equation must be valid
+        except:
+            #there was an error when evaluating the graph's equation, so it must be invalid
+            valid = False
+
+        self.set_equation_string(prev_equation_string)  #reset the graphs equation string
+
+        return valid
+
+    def substitute_variables(self, x_value):
+        substituted_expression = ""
+        for char in self.function:
+            if char == "x":
+                substituted_expression += f"({x_value})"
+            else:
+                substituted_expression += char
+
+        return substituted_expression
 
     def draw(self):
         for pixel_x in range(Axis.PIXEL_INDENT_X, gui.SCREEN_WIDTH):
@@ -160,12 +192,18 @@ class Graph:
 
                 pixel_y = self.axis.axis_y_to_pixel_y(y)
 
-                pygame.draw.circle(self.window, (255, 0, 0), (pixel_x, pixel_y), 1)
+                pygame.draw.circle(self.window, self.colour, (pixel_x, pixel_y), 1)
 
 
 class ExplicitGraph(Graph):
-    def __init__(self, window, equation_string, axis):
-        super().__init__(window, equation_string, axis)
+    def __init__(self, window, equation_string, axis, colour):
+        super().__init__(window, equation_string, axis, colour)
+
+        self.function = self.extract_function()
+
+    def set_equation_string(self, new_equation_string):
+        #overrides Graph.set_equation_string()
+        super().set_equation_string(new_equation_string)
 
         self.function = self.extract_function()
 
@@ -175,16 +213,6 @@ class ExplicitGraph(Graph):
 
         return func
     
-    def substitute_variables(self, x_value):
-        substituted_expression = ""
-        for char in self.function:
-            if char == "x":
-                substituted_expression += f"({x_value})"
-            else:
-                substituted_expression += char
-
-        return substituted_expression
-    
     def get_y_value(self, x_value):
         substituted_expression = self.substitute_variables(x_value)
         y = calculator_utils.evaluate_expression(substituted_expression)
@@ -192,14 +220,105 @@ class ExplicitGraph(Graph):
         return y
 
 
-def main(window):
-    a = Axis(window, -1, 10, -10, 10)
-    temp = ExplicitGraph(window, "y=2x", a)
+class GrapherMenu:
+    GRAPH_COLOURS = (
+        (255, 0, 0),
+        (0, 255, 0),
+        (0, 0, 255)
+    )
 
-    window.fill((0, 0, 0))
-    a.draw()
-    temp.draw()
-    pygame.display.update()
+    GRAPH_INPUT_WIDTH = 80
+
+    GRAPH_INPUT_PADDING_X = 10
+    GRAPH_INPUT_PADDING_Y = 5
+
+    def __init__(self, window):
+        self.window = window
+
+        self.needs_redraw = True
+
+        self.axis = self.setup_axis()
+        self.graph_inputs = self.setup_graph_inputs()
+        self.graphs = self.setup_graphs()
+
+        self.redraw_entire_screen()  #we need to draw everything from scratch when the menu is first created
+
+    def setup_graph_inputs(self):
+        num_boxes = len(GrapherMenu.GRAPH_COLOURS)
+
+        box_height = (gui.SCREEN_HEIGHT - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes - 1)) // num_boxes
+
+        graph_inputs = []
+        for i in range(num_boxes):
+            top_left_y = i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
+            top_left = (GrapherMenu.GRAPH_INPUT_PADDING_X, top_left_y)
+
+            input_box = gui.TextInput(top_left, GrapherMenu.GRAPH_INPUT_WIDTH, box_height, "...")
+
+            graph_inputs.append(input_box)
+
+        return graph_inputs
+    
+    def setup_axis(self):
+        axis = Axis(self.window, -10, 10, -10, 10)
+
+        return axis
+    
+    def setup_graphs(self):
+        graphs = []
+        for colour in GrapherMenu.GRAPH_COLOURS:
+            graph = ExplicitGraph(self.window, "y=x", self.axis, colour)
+            graphs.append(graph)
+
+        return graphs
+        
+    def update_graphs(self):
+        self.needs_redraw = False
+
+        for input_box, graph in zip(self.graph_inputs, self.graphs):
+            inputted_equation = input_box.get_inputted_text()
+
+            if inputted_equation != "" and inputted_equation != graph.equation_string and graph.check_valid_equation(inputted_equation):
+                #the user has entered a different graph equation
+                graph.set_equation_string(inputted_equation)
+                self.needs_redraw = True  #because a graph has been changed, we must redraw the entire screen (including all graphs)
+
+    def check_user_input(self):
+        for input_box in self.graph_inputs:
+            input_box.check_user_input()
+
+        self.update_graphs()
+
+    def partial_clear_screen(self):
+        #we want to clear the section of the screen containing the inputs, but not the graphs because these are only drawn once
+        rect = (0, 0, Axis.PIXEL_INDENT_X, gui.SCREEN_HEIGHT)
+        pygame.draw.rect(self.window, gui.BACKGROUND_COLOUR, rect)
+
+    def redraw_entire_screen(self):
+        #should be called when the equation of a graph has changed
+        self.window.fill(gui.BACKGROUND_COLOUR)
+
+        self.axis.draw()
+
+        for graph in self.graphs:
+            graph.draw()
+
+    def draw(self):
+        if self.needs_redraw:
+            self.redraw_entire_screen()
+        else:
+            self.partial_clear_screen()
+
+        for input_box in self.graph_inputs:
+            input_box.draw(self.window)
+
+        pygame.display.update()
+
+def main(window):
+    menu = GrapherMenu(window)
 
     while True:
+        menu.check_user_input()
+        menu.draw()
+
         gui.check_user_quit()
