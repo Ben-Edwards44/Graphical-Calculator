@@ -1,6 +1,7 @@
 import gui
 import math
 import pygame
+import random
 import calculator_utils
 
 
@@ -158,9 +159,11 @@ class Graph:
         #check whether the graph's equation string is valid
         prev_equation_string = self.equation_string
 
+        test_value_x = random.uniform(0, 100)
+
         try:
             self.set_equation_string(equation_string)
-            test_y = self.get_y_value(0)
+            test_y = self.get_y_value(test_value_x)
 
             valid = test_y is not None  #if a number is returned (not a None value), the equation must be valid
         except:
@@ -193,6 +196,8 @@ class Graph:
                 x = axis_x + self.axis.pixel_width * fraction_into_pixel
                 y = self.get_y_value(x)
 
+                if y is None: continue  #this x value results in an error, like dividing by 0
+
                 pixel_y = self.axis.axis_y_to_pixel_y(y)
 
                 pygame.draw.circle(self.window, self.colour, (pixel_x, pixel_y), 1)
@@ -220,7 +225,12 @@ class ExplicitGraph(Graph):
     
     def get_y_value(self, x_value):
         substituted_expression = self.substitute_variables(x_value)
-        y = calculator_utils.evaluate_expression(substituted_expression)
+
+        try:
+            y = calculator_utils.evaluate_expression(substituted_expression)
+        except ZeroDivisionError:
+            #for graphs like y=1/x, substituting x=0 gives a divide by zero error
+            y = None
 
         return y
 
@@ -327,6 +337,7 @@ class GrapherMenu:
         self.back_button.draw(self.window)
 
         pygame.display.update()
+
 
 def main(window):
     menu = GrapherMenu(window)
