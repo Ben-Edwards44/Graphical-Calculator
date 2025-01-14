@@ -1,6 +1,9 @@
 import calculator_utils
 
 
+ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+
+
 class ArbitraryEquation:
     SMALL_X_STEP = 0.01
 
@@ -12,7 +15,9 @@ class ArbitraryEquation:
 
     def __init__(self, equation_string):
         self.equation_string = equation_string
+
         self.lhs, self.rhs = self.extract_sides()
+        self.variable_name = self.extract_variable_name()
 
     def extract_sides(self):
         #extract the left hand side and right hand side of the equation
@@ -20,20 +25,26 @@ class ArbitraryEquation:
 
         return left, right
     
-    def substitute_variable(self, expression, x_value):
+    def extract_variable_name(self):
+        #most of the time, the variable name will be 'x' or 'y'. By convention, variable names are only a single character
+        for char in self.equation_string:
+            if char in ALPHABET:
+                return char
+    
+    def substitute_variable(self, expression, variable_value):
         substituted_expression = ""
         for char in expression:
-            if char == "x":
-                substituted_expression += f"({x_value})"
+            if char == self.variable_name:
+                substituted_expression += f"({variable_value})"
             else:
                 substituted_expression += char
 
         return substituted_expression
     
-    def evaluate_equals_zero(self, x_value):
+    def evaluate_equals_zero(self, variable_value):
         #evaluate the equation as if it was in the form f(x)=0
-        left_substituted = self.substitute_variable(self.lhs, x_value)
-        right_substituted = self.substitute_variable(self.rhs, x_value)
+        left_substituted = self.substitute_variable(self.lhs, variable_value)
+        right_substituted = self.substitute_variable(self.rhs, variable_value)
 
         left = calculator_utils.evaluate_expression(left_substituted)
         right = calculator_utils.evaluate_expression(right_substituted)
@@ -43,35 +54,34 @@ class ArbitraryEquation:
 
         return evaluation
 
-    def differentiate(self, x_value):
-        y1 = self.evaluate_equals_zero(x_value)
-        y2 = self.evaluate_equals_zero(x_value + ArbitraryEquation.SMALL_X_STEP)
+    def differentiate(self, variable_value):
+        y1 = self.evaluate_equals_zero(variable_value)
+        y2 = self.evaluate_equals_zero(variable_value + ArbitraryEquation.SMALL_X_STEP)
 
         gradient = (y2 - y1) / ArbitraryEquation.SMALL_X_STEP
 
         return gradient
     
-    def solve(self, start_x_value):
-        x = start_x_value
+    def solve(self, start_variable_value):
+        variable = start_variable_value
 
         #apply the Newton-Raphson method to solve the equation
         for _ in range(ArbitraryEquation.NUM_NEWTON_RAPHSON_STEPS):
-            print(x)
-            x = x - self.evaluate_equals_zero(x) / self.differentiate(x)
+            variable = variable - self.evaluate_equals_zero(variable) / self.differentiate(variable)
 
-        return x
+        return variable
     
-    def find_all_solutions(self, min_x, max_x):
-        #find all the solutions to the equation in the range min_x <= x <= max_x
-        x_step = (max_x - min_x) / ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION
+    def find_all_solutions(self, min, max):
+        #find all the solutions to the equation in the range min <= solution <= max
+        x_step = (max - min) / ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION
 
         solutions = []
         for step in range(ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION):
-            start_x = min_x + step * x_step
+            start_x = min + step * x_step
             solution = self.solve(start_x)
             is_actual_solution = abs(self.evaluate_equals_zero(solution)) < ArbitraryEquation.TOLERANCE  #the Newton-Raphson method does not always converge, so sometimes gives numbers that are not solutions
 
-            if min_x <= solution <= max_x and is_new_element(solutions, solution, ArbitraryEquation.TOLERANCE) and is_actual_solution:
+            if min <= solution <= max and is_new_element(solutions, solution, ArbitraryEquation.TOLERANCE) and is_actual_solution:
                 solutions.append(solution)
 
         return solutions

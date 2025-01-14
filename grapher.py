@@ -2,6 +2,7 @@ import gui
 import math
 import pygame
 import random
+import equation_utils
 import calculator_utils
 
 
@@ -163,8 +164,8 @@ class Graph:
 
         try:
             self.set_equation_string(equation_string)
-            test_y = self.get_y_value(test_value_x)
 
+            test_y = self.get_y_values(test_value_x)
             valid = test_y is not None  #if a number is returned (not a None value), the equation must be valid
         except:
             #there was an error when evaluating the graph's equation, so it must be invalid
@@ -194,13 +195,14 @@ class Graph:
                 fraction_into_pixel = sample_num / Graph.RESOLUTION
 
                 x = axis_x + self.axis.pixel_width * fraction_into_pixel
-                y = self.get_y_value(x)
+                y_values = self.get_y_values(x)
 
-                if y is None: continue  #this x value results in an error, like dividing by 0
+                if y_values is None: continue  #this x value results in an error, like dividing by 0
 
-                pixel_y = self.axis.axis_y_to_pixel_y(y)
-
-                pygame.draw.circle(self.window, self.colour, (pixel_x, pixel_y), 1)
+                #draw a rect one pixel wide at each coordinate on the graph
+                for y in y_values:
+                    pixel_y = self.axis.axis_y_to_pixel_y(y)
+                    pygame.draw.rect(self.window, self.colour, (pixel_x, pixel_y, 1, 1))
 
 
 class ExplicitGraph(Graph):
@@ -223,7 +225,7 @@ class ExplicitGraph(Graph):
 
         return func
     
-    def get_y_value(self, x_value):
+    def get_y_values(self, x_value):
         substituted_expression = self.substitute_variables(x_value)
 
         try:
@@ -232,7 +234,22 @@ class ExplicitGraph(Graph):
             #for graphs like y=1/x, substituting x=0 gives a divide by zero error
             y = None
 
-        return y
+        if y is None: return None  #this can occur if the equation is y= (nothing given on right hand side)
+
+        return [y]
+    
+
+class ImplicitGraph(Graph):
+    def __init__(self, window, axis, colour):
+        super().__init__(window, axis, colour)
+
+    def get_y_values(self, x_value):
+        substituted_expression = self.substitute_variables(x_value)
+        equation = equation_utils.ArbitraryEquation(substituted_expression)
+
+        y_values = equation.find_all_solutions(self.axis.min_y, self.axis.max_y)
+
+        return y_values
 
 
 class GrapherMenu:
