@@ -1,6 +1,9 @@
 import math
 
 
+DIGITS = "0123456789"
+
+
 class Stack:
     def __init__(self):
         self.items = []
@@ -34,6 +37,7 @@ class Token:
     OPERATOR_TYPE = 1
     FUNCTION_TYPE = 2
     BRACKET_TYPE = 3
+    ALGEBRA_TERM_TYPE = 4
 
     def __init__(self):
         self.string = ""
@@ -42,6 +46,7 @@ class Token:
     is_number = lambda self: self.type == Token.NUMBER_TYPE
     is_operator = lambda self: self.type == Token.OPERATOR_TYPE
     is_function = lambda self: self.type == Token.FUNCTION_TYPE
+    is_algebra_term = lambda self: self.type == Token.ALGEBRA_TERM_TYPE
     is_open_bracket = lambda self: self.type == Token.BRACKET_TYPE and self.string == "("
     is_close_bracket = lambda self: self.type == Token.BRACKET_TYPE and self.string == ")"
 
@@ -56,17 +61,28 @@ class Token:
             return  #stops an error being thrown when the OPERATOR_PRECEDENCE dictionary is being accessed
         
         return Token.OPERATOR_PRECEDENCE[self.string]
+    
+    def get_algebra_term_name(self):
+        if not self.is_algebra_term():
+            return
+        
+        return self.string
 
     def get_type(self, string):
-        if len(string) == 1 and string in Token.OPERATOR_PRECEDENCE.keys():
-            return Token.OPERATOR_TYPE
-        elif len(string) == 1 and (string == "(" or string == ")"):
-            return Token.BRACKET_TYPE
+        if len(string) == 1:
+            if string in Token.OPERATOR_PRECEDENCE.keys():
+                return Token.OPERATOR_TYPE
+            elif string == "(" or string == ")":
+                return Token.BRACKET_TYPE
+            elif string in DIGITS or string == ".":
+                return Token.NUMBER_TYPE
+            else:
+                return Token.ALGEBRA_TERM_TYPE
         else:
-            #the string is either a number or a function
+            #the string is either a number (longer than one digit) or a function
             is_number = True
             for char in string:
-                if char not in "0123456789.":
+                if char not in DIGITS and char != ".":
                     is_number = False
                     break
 
@@ -86,7 +102,7 @@ class Token:
         type_of_char = self.get_type(new_char)
 
         #if the char is a different token type or the current token should only be 1 char long (open bracket or close bracket), this char is a completely new token and should not be added
-        should_add_char = type_of_char == self.type and (not self.is_open_bracket() and not self.is_close_bracket())
+        should_add_char = type_of_char == self.type and (not self.is_open_bracket() and not self.is_close_bracket() and not self.is_algebra_term())
 
         if should_add_char:
             self.string += new_char
@@ -113,11 +129,16 @@ class Token:
         func = Token.FUNCTIONS[self.string]
 
         return func(argument)
+    
+    def __repr__(self):
+        #for debugging purposes only
+        return f"<Token: type={self.type}, string={self.string}>"
 
 
 class InfixExpression:
     def __init__(self, expression):
         self.expression = expression
+        self.postfix_expression = self.covert_to_postfix()
 
     def tokenise(self):
         tokens = []
@@ -166,8 +187,8 @@ class InfixExpression:
 
             prev_token = tokenised_expression[token_inx - 1]
 
-            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket()
-            current_can_be_implied = token.is_open_bracket() or token.is_function()
+            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket() or prev_token.is_algebra_term()
+            current_can_be_implied = token.is_open_bracket() or token.is_function() or token.is_algebra_term()
 
             if prev_can_be_implied and current_can_be_implied:
                 #insert a multiplication token to make the multiplication explicit
@@ -178,13 +199,13 @@ class InfixExpression:
 
         return tokenised_expression
 
-    def covert_to_postfix(self, tokenised_expression):
+    def covert_tokens_to_postfix(self, tokenised_expression):
         #use the Shunting Yard algorithm to return postfix expression of tokens
         tokenised_postfix = []
         operator_stack = Stack()
 
         for token in tokenised_expression:
-            if token.is_number():
+            if token.is_number() or token.is_algebra_term():
                 tokenised_postfix.append(token)
             elif token.is_function():
                 operator_stack.push(token)
@@ -227,16 +248,19 @@ class InfixExpression:
 
         return tokenised_postfix
     
-    def evaluate(self):
+    def covert_to_postfix(self):
         tokenised_infix = self.tokenise()
         
         tokenised_infix = self.detect_unary_minus(tokenised_infix)
         tokenised_infix = self.detect_implied_multiplication(tokenised_infix)
 
-        tokenised_postfix = self.covert_to_postfix(tokenised_infix)
+        tokenised_postfix = self.covert_tokens_to_postfix(tokenised_infix)
 
+        return tokenised_postfix
+    
+    def evaluate(self):
         evaluate_stack = Stack()
-        for token in tokenised_postfix:
+        for token in self.postfix_expression:
             if token.is_number():
                 numerical_value = token.get_float()
                 evaluate_stack.push(numerical_value)
@@ -258,6 +282,39 @@ class InfixExpression:
 
         return final_result
     
+
+class AlgebraicInfixExpression(InfixExpression):
+    def __init__(self, expression):
+        super().__init__(expression)
+
+    def substitute_variables(self, variable_substitutions):
+        substituted_expression = []
+        for token in self.postfix_expression:
+            if token.is_algebra_term():
+                substituted_value = variable_substitutions[token.get_algebra_term_name()]
+                substituted_string = str(substituted_value)
+
+                #replace the algebra term token with a number token
+                number_token = Token()
+                for char in substituted_string:
+                    number_token.add_char(char)
+
+                token = number_token
+
+            substituted_expression.append(token)
+
+        return substituted_expression
+
+    def evaluate(self, variable_substitutions):
+        new_postfix_expression = self.substitute_variables(variable_substitutions)
+        origional_postfix_expression = [i for i in self.postfix_expression]
+
+        self.postfix_expression = new_postfix_expression
+        evaluation = super().evaluate()
+        self.postfix_expression = origional_postfix_expression
+
+        return evaluation
+
 
 def evaluate_expression(expression):
     expression_object = InfixExpression(expression)
