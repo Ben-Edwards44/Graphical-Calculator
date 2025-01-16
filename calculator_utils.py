@@ -23,6 +23,8 @@ class Stack:
     
 
 class Token:
+    ALGEBRA_TERMS = ("x", "y", "z")
+
     OPERATOR_PRECEDENCE = {"+" : 1, "-" : 1, "*" : 2, "/" : 3, "^" : 4}
 
     FUNCTIONS = {
@@ -76,8 +78,10 @@ class Token:
                 return Token.BRACKET_TYPE
             elif string in DIGITS or string == ".":
                 return Token.NUMBER_TYPE
-            else:
+            elif string in Token.ALGEBRA_TERMS:
                 return Token.ALGEBRA_TERM_TYPE
+            else:
+                return Token.FUNCTION_TYPE  #this must be the start of a function (like the 's' from 'sin')
         else:
             #the string is either a number (longer than one digit) or a function
             is_number = True
@@ -145,11 +149,10 @@ class InfixExpression:
         current_token = Token()
 
         for char in self.expression:
-            if char == " ":
-                continue
-            
+            if char == " ": continue
+                
             char_added_to_token = current_token.add_char(char)
-            
+                
             if not char_added_to_token:
                 #the end of the current token has been reached - start adding a new token
                 tokens.append(current_token)
@@ -290,18 +293,38 @@ class AlgebraicInfixExpression(InfixExpression):
     def substitute_variables(self, variable_substitutions):
         substituted_expression = []
         for token in self.postfix_expression:
-            if token.is_algebra_term():
-                substituted_value = variable_substitutions[token.get_algebra_term_name()]
-                substituted_string = str(substituted_value)
+            if not token.is_algebra_term():
+                #no need to substitute this token because it is not an algebraic term
+                substituted_expression.append(token)
+                continue
 
-                #replace the algebra term token with a number token
+            substituted_value = variable_substitutions[token.get_algebra_term_name()]
+            substituted_string = str(substituted_value)
+
+            #replace the algebra term token with a number token
+            if substituted_string[0] != "-":
                 number_token = Token()
                 for char in substituted_string:
                     number_token.add_char(char)
 
-                token = number_token
+                substituted_expression.append(number_token)
+            else:
+                #negative numbers are a special case: we need to replace '-0.1' with '0 0.1 -'
+                zero = Token()
+                zero.add_char("0")
 
-            substituted_expression.append(token)
+                subtract = Token()
+                subtract.add_char("-")
+
+                positive_num = substituted_string[1:]
+
+                number_token = Token()
+                for char in positive_num:
+                    number_token.add_char(char)
+
+                substituted_expression.append(zero)
+                substituted_expression.append(number_token)
+                substituted_expression.append(subtract)
 
         return substituted_expression
 
