@@ -94,6 +94,16 @@ class Token:
                 return Token.NUMBER_TYPE
             else:
                 return Token.FUNCTION_TYPE
+            
+    def set_number(self, num):
+        #set this token to be a number
+        self.string = str(num)
+        self.type = Token.NUMBER_TYPE
+
+    def set_algebra_term(self, term_name):
+        #set this token to be a number
+        self.string = term_name
+        self.type = Token.ALGEBRA_TERM_TYPE
 
     def add_char(self, new_char):
         #check whether the new_char should be added to the token. If so, add it. Return whether the char has been added
@@ -290,51 +300,43 @@ class AlgebraicInfixExpression(InfixExpression):
     def __init__(self, expression):
         super().__init__(expression)
 
-    def substitute_variables(self, variable_substitutions):
-        substituted_expression = []
-        for token in self.postfix_expression:
-            if not token.is_algebra_term():
-                #no need to substitute this token because it is not an algebraic term
-                substituted_expression.append(token)
-                continue
+        self.algebra_term_objects = self.replace_algebra_term_tokens()
 
-            substituted_value = variable_substitutions[token.get_algebra_term_name()]
-            substituted_string = str(substituted_value)
+    def replace_algebra_term_tokens(self):
+        #we want all of the 'x' term tokens to be the same object so it is easier and faster to substitute them, same goes for 'y' etc.
+        seen_terms = {}
 
-            #replace the algebra term token with a number token
-            if substituted_string[0] != "-":
-                number_token = Token()
-                for char in substituted_string:
-                    number_token.add_char(char)
+        for inx, token in enumerate(self.postfix_expression):
+            if not token.is_algebra_term(): continue
 
-                substituted_expression.append(number_token)
+            term_name = token.get_algebra_term_name()
+            if term_name in seen_terms.keys():
+                #replace this token object with the object corresponding to the first occurance of the term
+                self.postfix_expression[inx] = seen_terms[term_name]
             else:
-                #negative numbers are a special case: we need to replace '-0.1' with '0 0.1 -'
-                zero = Token()
-                zero.add_char("0")
+                #this token is the first occurance of this algebra term - record it in the dictionary
+                seen_terms[term_name] = token
 
-                subtract = Token()
-                subtract.add_char("-")
+        return seen_terms
 
-                positive_num = substituted_string[1:]
+    def substitute_variables(self, variable_substitutions):
+        #change all of the algebra terms to their numerical value
+        for term_name, value in variable_substitutions.items():
+            if term_name in self.algebra_term_objects.keys():
+                token_object = self.algebra_term_objects[term_name]
+                token_object.set_number(value)
 
-                number_token = Token()
-                for char in positive_num:
-                    number_token.add_char(char)
-
-                substituted_expression.append(zero)
-                substituted_expression.append(number_token)
-                substituted_expression.append(subtract)
-
-        return substituted_expression
+    def revert_substitution(self):
+        #reset the substituted algebra terms back to being algebra terms (not numbers)
+        for term_name, token_object in self.algebra_term_objects.items():
+            token_object.set_algebra_term(term_name)
 
     def evaluate(self, variable_substitutions):
-        new_postfix_expression = self.substitute_variables(variable_substitutions)
-        origional_postfix_expression = [i for i in self.postfix_expression]
+        self.substitute_variables(variable_substitutions)
 
-        self.postfix_expression = new_postfix_expression
         evaluation = super().evaluate()
-        self.postfix_expression = origional_postfix_expression
+        
+        self.revert_substitution()  #ensures everything is back to normal if we want to substitute different numbers in
 
         return evaluation
 

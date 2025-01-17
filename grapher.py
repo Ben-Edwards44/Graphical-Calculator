@@ -143,7 +143,7 @@ class Axis:
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines (good continuity vs not right for discontinuous curves)
 class Graph:
-    RESOLUTION = 5  #how many x value samples taken per pixel
+    RESOLUTION = 10  #how many x value samples taken per pixel
 
     def __init__(self, window, axis, colour):
         self.window = window
@@ -175,16 +175,6 @@ class Graph:
 
         return valid
 
-    def substitute_variables(self, x_value):
-        substituted_expression = ""
-        for char in self.function:
-            if char == "x":
-                substituted_expression += f"({x_value})"
-            else:
-                substituted_expression += char
-
-        return substituted_expression
-
     def draw(self):
         if self.equation_string == "": return  #graph equation has not yet been set
 
@@ -209,13 +199,15 @@ class ExplicitGraph(Graph):
     def __init__(self, window, axis, colour):
         super().__init__(window, axis, colour)
 
-        self.function = ""
+        self.function_expression = None
 
     def set_equation_string(self, new_equation_string):
         #overrides Graph.set_equation_string()
         super().set_equation_string(new_equation_string)
 
-        self.function = self.extract_function()
+        function = self.extract_function()
+
+        self.function_expression = calculator_utils.AlgebraicInfixExpression(function)
 
     def extract_function(self):
         #equation string will be in form y=f(x), we only want the f(x) part
@@ -226,10 +218,12 @@ class ExplicitGraph(Graph):
         return func
     
     def get_y_values(self, x_value):
-        substituted_expression = self.substitute_variables(x_value)
+        if self.function_expression is None: return None
+
+        substitution = {"x" : x_value}
 
         try:
-            y = calculator_utils.evaluate_expression(substituted_expression)
+            y = self.function_expression.evaluate(substitution)
         except ZeroDivisionError:
             #for graphs like y=1/x, substituting x=0 gives a divide by zero error
             y = None
@@ -243,12 +237,33 @@ class ImplicitGraph(Graph):
     def __init__(self, window, axis, colour):
         super().__init__(window, axis, colour)
 
+        self.equation_solver = None
+
+    def set_equation_string(self, new_equation_string):
+        #overrides Graph.set_equation_string()
+        super().set_equation_string(new_equation_string)
+
+        if new_equation_string == "":
+            #equation has not yet been set
+            self.equation_solver = None
+            return
+
+        left_string, right_string = new_equation_string.split("=")
+
+        lhs_expression = calculator_utils.AlgebraicInfixExpression(left_string)
+        rhs_expression = calculator_utils.AlgebraicInfixExpression(right_string)
+
+        self.equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y")
+
     def get_y_values(self, x_value):
-        substituted_expression = self.substitute_variables(x_value)
-        equation = equation_utils.ArbitraryEquation(substituted_expression)
+        known_substitutions = {"x" : x_value}
 
-        y_values = equation.find_all_solutions(self.axis.min_y, self.axis.max_y)
-
+        try:
+            y_values = self.equation_solver.find_all_solutions(self.axis.min_y, self.axis.max_y, known_substitutions)
+        except Exception as e:
+            #if an equation has not solutions, there may be a division by zero error when trying to solve it
+            return None
+        
         return y_values
 
 
@@ -304,7 +319,7 @@ class GrapherMenu:
     def setup_graphs(self):
         graphs = []
         for colour in GrapherMenu.GRAPH_COLOURS:
-            graph = ExplicitGraph(self.window, self.axis, colour)
+            graph = ImplicitGraph(self.window, self.axis, colour)
             graphs.append(graph)
 
         return graphs
