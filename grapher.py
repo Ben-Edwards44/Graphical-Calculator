@@ -301,14 +301,11 @@ class GrapherMenu:
         self.window = window
 
         self.go_back = False
-        self.needs_redraw = True
 
         self.axis = self.setup_axis()
         self.graph_inputs = self.setup_graph_inputs()
         self.graphs = self.setup_graphs()
         self.back_button = gui.create_back_button()
-
-        self.redraw_entire_screen()  #we need to draw everything from scratch when the menu is first created
 
     def setup_graph_inputs(self):
         num_boxes = len(GrapherMenu.GRAPH_COLOURS)
@@ -340,15 +337,12 @@ class GrapherMenu:
         return graphs
         
     def update_graphs(self):
-        self.needs_redraw = False
-
         for input_box, graph in zip(self.graph_inputs, self.graphs):
             inputted_equation = input_box.get_inputted_text()
 
             if inputted_equation != "" and inputted_equation != graph.equation_string and graph.check_valid_equation(inputted_equation):
                 #the user has entered a different graph equation
                 graph.set_equation_string(inputted_equation)
-                self.needs_redraw = True  #because a graph has been changed, we must redraw the entire screen (including all graphs)
 
     def check_user_input(self):
         if self.back_button.is_clicked(): self.go_back = True
@@ -357,14 +351,8 @@ class GrapherMenu:
             input_box.check_user_input()
 
         self.update_graphs()
-
-    def partial_clear_screen(self):
-        #we want to clear the section of the screen containing the inputs, but not the graphs because these are only drawn once
-        rect = (0, 0, Axis.PIXEL_INDENT_X, gui.SCREEN_HEIGHT)
-        pygame.draw.rect(self.window, gui.BACKGROUND_COLOUR, rect)
-
-    def redraw_entire_screen(self):
-        #should be called when the equation of a graph has changed
+        
+    def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
 
         self.axis.draw()
@@ -372,18 +360,24 @@ class GrapherMenu:
         for graph in self.graphs:
             graph.draw()
 
-    def draw(self):
-        if self.needs_redraw:
-            self.redraw_entire_screen()
-        else:
-            self.partial_clear_screen()
-
         for input_box in self.graph_inputs:
             input_box.draw(self.window)
 
         self.back_button.draw(self.window)
 
         pygame.display.update()
+
+
+def get_graph_type(equation_string):
+    #determine whether a graph is implicit or explicit
+    lhs, rhs = equation_string.split("=")
+
+    if lhs == "y" and "y" not in rhs:
+        return ExplicitGraph
+    elif rhs == "y" and "y" not in lhs:
+        return ExplicitGraph
+    else:
+        return ImplicitGraph
 
 
 def main(window):
