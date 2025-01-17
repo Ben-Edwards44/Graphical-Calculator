@@ -152,9 +152,11 @@ class Graph:
 
         self.equation_string = ""
 
+        self.pixel_points_on_graph = None
+
     def set_equation_string(self, new_equation_string):
-        self.been_drawn = False  #because we have updated the equation of the graph, we need to draw it again
         self.equation_string = new_equation_string
+        self.pixel_points_on_graph = None  #because we have updated the equation of the graph, we need to draw it again
 
     def check_valid_equation(self, equation_string):
         #check whether the graph's equation string is valid
@@ -174,10 +176,9 @@ class Graph:
         self.set_equation_string(prev_equation_string)  #reset the graphs equation string
 
         return valid
-
-    def draw(self):
-        if self.equation_string == "": return  #graph equation has not yet been set
-
+    
+    def get_points_on_graph(self):
+        points_on_graph = set()  #a set is used to remove duplicates (no need to draw a pixel twice)
         for pixel_x in range(Axis.PIXEL_INDENT_X, gui.SCREEN_WIDTH):
             axis_x = self.axis.pixel_x_to_axis_x(pixel_x)
 
@@ -189,10 +190,24 @@ class Graph:
 
                 if y_values is None: continue  #this x value results in an error, like dividing by 0
 
-                #draw a rect one pixel wide at each coordinate on the graph
                 for y in y_values:
                     pixel_y = self.axis.axis_y_to_pixel_y(y)
-                    pygame.draw.rect(self.window, self.colour, (pixel_x, pixel_y, 1, 1))
+
+                    coordinate = (pixel_x, pixel_y)
+                    points_on_graph.add(coordinate)
+
+        return points_on_graph
+
+    def draw(self):
+        if self.equation_string == "": return  #graph equation has not yet been set
+
+        if self.pixel_points_on_graph is None:
+            #we need to calcluate what points are on the graph because this has not yet been done
+            self.pixel_points_on_graph = self.get_points_on_graph()
+
+        for x, y in self.pixel_points_on_graph:
+            #draw a rectangle one pixel wide at each coordinate on the graph
+            pygame.draw.rect(self.window, self.colour, (x, y, 1, 1))
 
 
 class ExplicitGraph(Graph):
