@@ -310,11 +310,12 @@ class GrapherMenu:
     def setup_graph_inputs(self):
         num_boxes = len(GrapherMenu.GRAPH_COLOURS)
 
-        box_height = (gui.SCREEN_HEIGHT - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes + 1)) // num_boxes
+        back_button_space = gui.BACK_BUTTON_POS[1] * 2 + gui.BACK_BUTTON_HEIGHT
+        box_height = (gui.SCREEN_HEIGHT - back_button_space - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes + 1)) // num_boxes
 
         graph_inputs = []
         for i in range(num_boxes):
-            top_left_y = GrapherMenu.GRAPH_INPUT_PADDING_Y + i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
+            top_left_y = back_button_space + GrapherMenu.GRAPH_INPUT_PADDING_Y + i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
             top_left = (GrapherMenu.GRAPH_INPUT_PADDING_X, top_left_y)
 
             input_box = gui.TextInput(top_left, GrapherMenu.GRAPH_INPUT_WIDTH, box_height, "...")
