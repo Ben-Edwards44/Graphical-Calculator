@@ -115,8 +115,9 @@ class Token:
         
         type_of_char = self.get_type(new_char)
 
-        #if the char is a different token type or the current token should only be 1 char long (open bracket or close bracket), this char is a completely new token and should not be added
-        should_add_char = type_of_char == self.type and (not self.is_open_bracket() and not self.is_close_bracket() and not self.is_algebra_term())
+        #if the char is a different token type or the current token should only be 1 char long (open bracket, close bracket, operator, term), this char is a completely new token and should not be added
+        one_char_token = self.is_open_bracket() or self.is_close_bracket() or self.is_algebra_term() or self.is_operator()
+        should_add_char = type_of_char == self.type and not one_char_token
 
         if should_add_char:
             self.string += new_char
@@ -175,23 +176,31 @@ class InfixExpression:
         return tokens
     
     def detect_unary_minus(self, tokenised_expression):
-        #detect any unary minus operators and place a 0 before them
+        #detect any unary minus operators and fix them
+        new_expression = []
         for token_inx, token in enumerate(tokenised_expression):
             if token.is_operator() and token.string == "-":
+                is_unary = True
                 if token_inx > 0:
                     prev_token = tokenised_expression[token_inx - 1]
                     is_unary = prev_token.is_operator() or prev_token.is_open_bracket()
-                else:
-                    is_unary = True
 
                 if is_unary:
-                    #the number -12 is the same as 0-12, therefore placing a 0 before the unary minus will ensure it is evaluated correctly
-                    zero_token = Token()
-                    zero_token.add_char("0")
+                    #the number -12 is the same as (-1)*12, therefore multiplying by -1 will ensure it is evaluated correctly
+                    minus_one = Token()
+                    minus_one.set_number("-1")
 
-                    tokenised_expression.insert(token_inx, zero_token)
+                    multiply = Token()
+                    multiply.add_char("*")
 
-        return tokenised_expression
+                    new_expression.append(minus_one)
+                    new_expression.append(multiply)
+
+                    continue  #we do not want to append the minus token to the expression, so just continue to the next token
+            
+            new_expression.append(token)
+
+        return new_expression
     
     def detect_implied_multiplication(self, tokenised_expression):
         #detect if the expression is (1+2)(3+4) instead of (1+2)*(3+4), or 2sin(5) instead of 2*sin(5)
