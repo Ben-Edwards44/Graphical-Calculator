@@ -143,7 +143,9 @@ class Axis:
 
 #NOTE: do dry run of graph drawing algorithms - points vs lines (good continuity vs not right for discontinuous curves)
 class Graph:
-    RESOLUTION = 10  #how many x value samples taken per pixel
+    RESOLUTION = 4  #how many x value samples taken per pixel
+
+    LINE_WIDTH = 2
 
     def __init__(self, equation_string, window, axis, colour):
         self.window = window
@@ -197,7 +199,7 @@ class Graph:
 
         for x, y in self.pixel_points_on_graph:
             #draw a rectangle one pixel wide at each coordinate on the graph
-            pygame.draw.rect(self.window, self.colour, (x, y, 1, 1))
+            pygame.draw.rect(self.window, self.colour, (x, y, Graph.LINE_WIDTH, Graph.LINE_WIDTH))
 
 
 class ExplicitGraph(Graph):

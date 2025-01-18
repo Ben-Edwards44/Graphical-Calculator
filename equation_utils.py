@@ -1,14 +1,11 @@
-import calculator_utils
-
-
 class ArbitraryEquation:
     SMALL_X_STEP = 0.01
 
-    NUM_NEWTON_RAPHSON_STEPS = 2
+    NUM_NEWTON_RAPHSON_STEPS = 6
 
-    SOLUTION_SEARCH_RESOLUTION = 10
+    SOLUTION_SEARCH_RESOLUTION = 12
 
-    TOLERANCE = 0.1
+    TOLERANCE = 0.01
 
     def __init__(self, lhs_expression, rhs_expression, variable_to_solve_for):
         self.lhs = lhs_expression
