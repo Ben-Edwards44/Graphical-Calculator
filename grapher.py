@@ -145,35 +145,25 @@ class Axis:
 class Graph:
     RESOLUTION = 10  #how many x value samples taken per pixel
 
-    def __init__(self, window, axis, colour):
+    def __init__(self, equation_string, window, axis, colour):
         self.window = window
         self.axis = axis
         self.colour = colour
 
-        self.equation_string = ""
+        self.equation_string = equation_string
 
         self.pixel_points_on_graph = None
 
-    def set_equation_string(self, new_equation_string):
-        self.equation_string = new_equation_string
-        self.pixel_points_on_graph = None  #because we have updated the equation of the graph, we need to draw it again
-
-    def check_valid_equation(self, equation_string):
-        #check whether the graph's equation string is valid
-        prev_equation_string = self.equation_string
-
+    def check_valid_equation(self):
+        #check whether the graph's equation string is valid by testing a random x value
         test_value_x = random.uniform(0, 100)
 
         try:
-            self.set_equation_string(equation_string)
-
             test_y = self.get_y_values(test_value_x)
             valid = test_y is not None  #if a number is returned (not a None value), the equation must be valid
         except:
             #there was an error when evaluating the graph's equation, so it must be invalid
             valid = False
-
-        self.set_equation_string(prev_equation_string)  #reset the graphs equation string
 
         return valid
     
@@ -211,30 +201,25 @@ class Graph:
 
 
 class ExplicitGraph(Graph):
-    def __init__(self, window, axis, colour):
-        super().__init__(window, axis, colour)
+    def __init__(self, equation_string, window, axis, colour):
+        super().__init__(equation_string, window, axis, colour)
 
-        self.function_expression = None
-
-    def set_equation_string(self, new_equation_string):
-        #overrides Graph.set_equation_string()
-        super().set_equation_string(new_equation_string)
-
-        function = self.extract_function()
-
-        self.function_expression = calculator_utils.AlgebraicInfixExpression(function)
+        self.function_expression = self.extract_function()
 
     def extract_function(self):
         #equation string will be in form y=f(x), we only want the f(x) part
-        if self.equation_string == "": return ""  #equation of graph has not yet been set
+        lhs, rhs = self.equation_string.split("=")
 
-        _, func = self.equation_string.split("=")
+        if lhs == "y":
+            func = rhs  #y=f(x)
+        else:
+            func = lhs  #f(x)=y
 
-        return func
+        func_expression = calculator_utils.AlgebraicInfixExpression(func)
+
+        return func_expression
     
     def get_y_values(self, x_value):
-        if self.function_expression is None: return None
-
         substitution = {"x" : x_value}
 
         try:
@@ -249,33 +234,27 @@ class ExplicitGraph(Graph):
     
 
 class ImplicitGraph(Graph):
-    def __init__(self, window, axis, colour):
-        super().__init__(window, axis, colour)
+    def __init__(self, equation_string, window, axis, colour):
+        super().__init__(equation_string, window, axis, colour)
 
-        self.equation_solver = None
+        self.equation_solver = self.get_equation_solver()
 
-    def set_equation_string(self, new_equation_string):
-        #overrides Graph.set_equation_string()
-        super().set_equation_string(new_equation_string)
-
-        if new_equation_string == "":
-            #equation has not yet been set
-            self.equation_solver = None
-            return
-
-        left_string, right_string = new_equation_string.split("=")
+    def get_equation_solver(self):
+        left_string, right_string = self.equation_string.split("=")
 
         lhs_expression = calculator_utils.AlgebraicInfixExpression(left_string)
         rhs_expression = calculator_utils.AlgebraicInfixExpression(right_string)
 
-        self.equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y")
+        equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y")
+
+        return equation_solver
 
     def get_y_values(self, x_value):
         known_substitutions = {"x" : x_value}
 
         try:
             y_values = self.equation_solver.find_all_solutions(self.axis.min_y, self.axis.max_y, known_substitutions)
-        except Exception as e:
+        except:
             #if an equation has not solutions, there may be a division by zero error when trying to solve it
             return None
         
@@ -331,19 +310,24 @@ class GrapherMenu:
     
     def setup_graphs(self):
         graphs = []
-        for colour in GrapherMenu.GRAPH_COLOURS:
-            graph = ImplicitGraph(self.window, self.axis, colour)
-            graphs.append(graph)
+        for _ in GrapherMenu.GRAPH_COLOURS:
+            graphs.append(None)
 
         return graphs
         
     def update_graphs(self):
-        for input_box, graph in zip(self.graph_inputs, self.graphs):
+        for inx, input_box in enumerate(self.graph_inputs):
             inputted_equation = input_box.get_inputted_text()
+            
+            if inputted_equation == "": continue  #the graph's equation has not yet been set
 
-            if inputted_equation != "" and inputted_equation != graph.equation_string and graph.check_valid_equation(inputted_equation):
-                #the user has entered a different graph equation
-                graph.set_equation_string(inputted_equation)
+            prev_graph = self.graphs[inx]
+
+            if prev_graph is None or inputted_equation != prev_graph.equation_string:
+                #the graph's equation has changed - replace the graph object with a new one
+                new_graph = get_new_graph(inputted_equation, self.window, self.axis, GrapherMenu.GRAPH_COLOURS[inx])
+
+                self.graphs[inx] = new_graph
 
     def check_user_input(self):
         if self.back_button.is_clicked(): self.go_back = True
@@ -359,7 +343,9 @@ class GrapherMenu:
         self.axis.draw()
 
         for graph in self.graphs:
-            graph.draw()
+            #a graph will be None if it has not yet been set, or has an invalid equation
+            if graph is not None:
+                graph.draw()
 
         for input_box in self.graph_inputs:
             input_box.draw(self.window)
@@ -369,16 +355,37 @@ class GrapherMenu:
         pygame.display.update()
 
 
-def get_graph_type(equation_string):
-    #determine whether a graph is implicit or explicit
+def is_explicit_function(equation_string):
+    if "=" not in equation_string: return False
+
     lhs, rhs = equation_string.split("=")
 
-    if lhs == "y" and "y" not in rhs:
-        return ExplicitGraph
-    elif rhs == "y" and "y" not in lhs:
-        return ExplicitGraph
+    if lhs == "y":
+        return "y" not in rhs
+    elif rhs == "y":
+        return "y" not in lhs
     else:
-        return ImplicitGraph
+        return False
+
+
+def get_new_graph(equation_string, window, axis, colour):
+    #return a graph object with the equation string as its equation. If the equation string is invalid, return None
+    if "=" not in equation_string: return None
+
+    #try the explicit graph fist because this is more performant
+    if is_explicit_function(equation_string):
+        explicit = ExplicitGraph(equation_string, window, axis, colour)
+
+        if explicit.check_valid_equation():
+            return explicit
+    
+    #the explicit did not work, so the equation may be implicit
+    implicit = ImplicitGraph(equation_string, window, axis, colour)
+    if implicit.check_valid_equation():
+        return implicit
+    
+    #None of the graphs worked, so this equation must be invalid
+    return None
 
 
 def main(window):
