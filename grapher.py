@@ -28,6 +28,8 @@ class Axis:
         self.width = max_x - min_x
         self.height = max_y - min_y
 
+        self.prev_mouse_pos = None
+
         self.pixel_width = self.calculate_pixel_width()
 
     def calculate_pixel_width(self):
@@ -56,7 +58,7 @@ class Axis:
         return pixel_y
     
     def pixel_x_to_axis_x(self, pixel_x):
-        #convert a pixel x coordinate to an x coordinate on the axis - fraction_into_pixel specifes how far from the left of the pixel the coordinate should be
+        #convert a pixel x coordinate to an x coordinate on the axis
         pixel_x -= Axis.PIXEL_INDENT_X
         
         fraction_along = pixel_x / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X)
@@ -132,6 +134,38 @@ class Axis:
             pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (Axis.PIXEL_INDENT_X, line_pixel_y), (gui.SCREEN_WIDTH, line_pixel_y), Axis.BACKGROUND_LINE_WIDTH)
 
             line_axis_y -= axis_spacing
+
+    def translate(self, x_translation_pixels, y_translation_pixels):
+        #when the user clicks and drags, we need to update the bounds of the axis
+        x_translation = x_translation_pixels / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X) * self.width
+        y_translation = y_translation_pixels / gui.SCREEN_HEIGHT * self.height
+
+        #x translations are flipped
+        self.min_x -= x_translation
+        self.max_x -= x_translation
+
+        self.min_y += y_translation
+        self.max_y += y_translation
+
+    def check_mouse_drag(self):
+        #check if the user is dragging their mouse
+        if pygame.mouse.get_pressed()[0]:
+            mouse_pos = pygame.mouse.get_pos()
+
+            if self.prev_mouse_pos is not None:
+                #the user is dragging their mouse - translate the axis
+                delta_x = mouse_pos[0] - self.prev_mouse_pos[0]
+                delta_y = mouse_pos[1] - self.prev_mouse_pos[1]
+
+                self.translate(delta_x, delta_y)
+
+            self.prev_mouse_pos = mouse_pos
+        else:
+            #the user has stopped dragging, so set prev_mouse_pos to None to stop the axis being translated further
+            self.prev_mouse_pos = None
+
+    def check_user_input(self):
+        self.check_mouse_drag()
 
     def draw(self):
         self.draw_horizontal_background_lines()
@@ -333,6 +367,8 @@ class GrapherMenu:
 
     def check_user_input(self):
         if self.back_button.is_clicked(): self.go_back = True
+
+        self.axis.check_user_input()
 
         for input_box in self.graph_inputs:
             input_box.check_user_input()
