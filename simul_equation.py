@@ -14,6 +14,7 @@ class SimulEquationMenu:
     SOLVE_BUTTON_HEIGHT = 50
 
     START_NUM_EQUATIONS = 3
+    MAX_NUM_EQUATIONS = 7
 
     NUM_EQUATION_TOP_LEFT = (500, 20)
     NUM_EQUATION_WIDTH = 80
@@ -91,6 +92,9 @@ class SimulEquationMenu:
 
         if len(new_num_equations) > 0 and is_int:
             num_equations = int(new_num_equations)
+
+            if num_equations > SimulEquationMenu.MAX_NUM_EQUATIONS:
+                num_equations = SimulEquationMenu.MAX_NUM_EQUATIONS
             
             if num_equations != len(self.equations):
                 #user wants a different number of equations
