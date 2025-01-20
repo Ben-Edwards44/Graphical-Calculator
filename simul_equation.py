@@ -14,13 +14,15 @@ class SimulEquationMenu:
     SOLVE_BUTTON_HEIGHT = 50
 
     START_NUM_EQUATIONS = 3
-    MAX_NUM_EQUATIONS = 7
+    MAX_NUM_EQUATIONS = 6
 
     NUM_EQUATION_TOP_LEFT = (500, 20)
     NUM_EQUATION_WIDTH = 80
     NUM_EQUATION_HEIGHT = 50
 
-    SOLUTION_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 50)
+    SOLUTION_TOP_LEFT = (40, gui.SCREEN_HEIGHT - 100)
+
+    DECIMAL_PLACES = 3
 
     def __init__(self, window):
         self.window = window
@@ -63,12 +65,13 @@ class SimulEquationMenu:
     def display_solutions(self, solutions):
         solution_text = ""
         for variable, solution in zip(ALPHABET, solutions):
-            solution_text += f"{variable} = {solution}"
+            correct_dp = round(solution, SimulEquationMenu.DECIMAL_PLACES)
+            solution_text += f"{variable}={correct_dp}"
 
             is_final_solution = variable == ALPHABET[len(solutions) - 1]
             if not is_final_solution:
                 #we only want to add a comma if this is the last solution in the list
-                solution_text += ", "
+                solution_text += ","
 
         self.solution_text.set_displayed_text(solution_text)
         self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)  #the displayed text may have changed length, so we need to re-position the text
