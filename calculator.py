@@ -6,9 +6,9 @@ import calculator_utils
 class CalculatorMenu:
     EXPRESSION_FONT_SIZE = 28
 
-    CHAR_BUTTONS = ["pi", "ANS", "sqrt", "="]
+    CHAR_BUTTONS = ["π", "e", "ANS", "sqrt", "="]
 
-    CHAR_BUTTON_WIDTH = 50
+    CHAR_BUTTON_WIDTH = 90
     CHAR_BUTTON_HEIGHT = 50
 
     CHAR_BUTTON_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 80)  #top left pos of the row of buttons

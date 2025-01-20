@@ -25,7 +25,11 @@ class Stack:
 class Token:
     ALGEBRA_TERMS = ("x", "y", "z")
 
-    OPERATOR_PRECEDENCE = {"+" : 1, "-" : 1, "*" : 2, "/" : 3, "^" : 4}
+    OPERATOR_PRECEDENCE = {"+" : 1,
+                           "-" : 1,
+                           "*" : 2,
+                           "/" : 3,
+                           "^" : 4}
 
     FUNCTIONS = {
         "sin" : math.sin,
@@ -34,30 +38,37 @@ class Token:
         "sqrt" : math.sqrt
     }
 
+    CONSTANTS = {
+        "π" : math.pi,
+        "e" : math.e
+    }
+
     #token types
     NUMBER_TYPE = 0
     OPERATOR_TYPE = 1
     FUNCTION_TYPE = 2
     BRACKET_TYPE = 3
     ALGEBRA_TERM_TYPE = 4
+    CONSTANT_TYPE = 5
 
     def __init__(self):
         self.string = ""
         self.type = None
 
     is_number = lambda self: self.type == Token.NUMBER_TYPE
+    is_constant = lambda self: self.type == Token.CONSTANT_TYPE
     is_operator = lambda self: self.type == Token.OPERATOR_TYPE
     is_function = lambda self: self.type == Token.FUNCTION_TYPE
     is_algebra_term = lambda self: self.type == Token.ALGEBRA_TERM_TYPE
     is_open_bracket = lambda self: self.type == Token.BRACKET_TYPE and self.string == "("
     is_close_bracket = lambda self: self.type == Token.BRACKET_TYPE and self.string == ")"
 
-    def get_float(self):
-        if not self.is_number:
-            return
+    def get_number(self):
+        if self.is_number():
+            return float(self.string)
+        elif self.is_constant():
+            return Token.CONSTANTS[self.string]
         
-        return float(self.string)
-
     def get_precedence(self):
         if not self.is_operator():
             return  #stops an error being thrown when the OPERATOR_PRECEDENCE dictionary is being accessed
@@ -80,6 +91,8 @@ class Token:
                 return Token.NUMBER_TYPE
             elif string in Token.ALGEBRA_TERMS:
                 return Token.ALGEBRA_TERM_TYPE
+            elif string in Token.CONSTANTS.keys():
+                return Token.CONSTANT_TYPE
             else:
                 return Token.FUNCTION_TYPE  #this must be the start of a function (like the 's' from 'sin')
         else:
@@ -116,7 +129,7 @@ class Token:
         type_of_char = self.get_type(new_char)
 
         #if the char is a different token type or the current token should only be 1 char long (open bracket, close bracket, operator, term), this char is a completely new token and should not be added
-        one_char_token = self.is_open_bracket() or self.is_close_bracket() or self.is_algebra_term() or self.is_operator()
+        one_char_token = self.is_open_bracket() or self.is_close_bracket() or self.is_algebra_term() or self.is_operator() or self.is_constant()
         should_add_char = type_of_char == self.type and not one_char_token
 
         if should_add_char:
@@ -209,8 +222,8 @@ class InfixExpression:
 
             prev_token = tokenised_expression[token_inx - 1]
 
-            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket() or prev_token.is_algebra_term()
-            current_can_be_implied = token.is_open_bracket() or token.is_function() or token.is_algebra_term()
+            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket() or prev_token.is_algebra_term() or prev_token.is_constant()
+            current_can_be_implied = token.is_open_bracket() or token.is_function() or token.is_algebra_term() or prev_token.is_constant()
 
             if prev_can_be_implied and current_can_be_implied:
                 #insert a multiplication token to make the multiplication explicit
@@ -227,7 +240,7 @@ class InfixExpression:
         operator_stack = Stack()
 
         for token in tokenised_expression:
-            if token.is_number() or token.is_algebra_term():
+            if token.is_number() or token.is_algebra_term() or token.is_constant():
                 tokenised_postfix.append(token)
             elif token.is_function():
                 operator_stack.push(token)
@@ -253,7 +266,7 @@ class InfixExpression:
                     tokenised_postfix.append(operator_on_stack)
 
                     if operator_stack.is_empty():
-                        print("Mismatched brackets")
+                        raise Exception("Mismatched Brackets")
 
                 #there will be an open bracket and (potentially) a function left on the operator stack
                 operator_stack.pop()  #remove the open bracket
@@ -283,8 +296,8 @@ class InfixExpression:
     def evaluate(self):
         evaluate_stack = Stack()
         for token in self.postfix_expression:
-            if token.is_number():
-                numerical_value = token.get_float()
+            if token.is_number() or token.is_constant():
+                numerical_value = token.get_number()
                 evaluate_stack.push(numerical_value)
             elif token.is_operator():
                 operand2 = evaluate_stack.pop()
