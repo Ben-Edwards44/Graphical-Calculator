@@ -1,7 +1,7 @@
 import gui
 import pygame
 
-import matrix
+import about
 import grapher
 import equation
 import calculator
@@ -13,12 +13,14 @@ class MainMenu:
     MODE_NAMES = [
         ["Calculator", "2D grapher"],
         ["Equation", "Simul Equation"],
+        ["About"]
     ]
 
     #the functions called when the corresponding mode button is clicked - needs to match up with MODE_NAMES
     MODE_CLICK_EVENTS = [
         [calculator.main, grapher.main],
         [equation.main, simul_equation.main],
+        [about.main]
     ]
 
     BUTTON_WIDTH = 250

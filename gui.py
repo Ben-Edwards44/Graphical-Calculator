@@ -194,6 +194,12 @@ class DisplayText:
 
         self.center_pos = (new_center_x, new_center_y)
 
+    def get_width(self):
+        text_surface = self.font.render(self.displayed_text, False, self.font_colour)
+        text_rect = text_surface.get_rect()
+
+        return text_rect.width
+
     def draw(self, window):
         text_surface = self.font.render(self.displayed_text, True, self.font_colour)
         text_rect = text_surface.get_rect()
