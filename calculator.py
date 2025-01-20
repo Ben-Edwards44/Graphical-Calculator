@@ -152,16 +152,24 @@ class CalculatorMenu:
 
 
 class ExpressionBox:
+    DECIMAL_PLACES = 5
+
     def __init__(self, window, expression_string):
         self.window = window
         self.expression_string = expression_string
 
         self.answer_string = self.evaluate_expression()
 
+    def anser_to_string(self, answer):
+        correct_dp = round(answer, ExpressionBox.DECIMAL_PLACES)
+        string = str(correct_dp)
+
+        return string
+
     def evaluate_expression(self):
         try:
             answer = calculator_utils.evaluate_expression(self.expression_string)
-            answer_string = str(answer)
+            answer_string = self.anser_to_string(answer)
         except:
             #the user has entered an invalid expression: an error will be displayed
             self.expression_string = "ERROR"

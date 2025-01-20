@@ -153,7 +153,7 @@ class ColourChangeButton(TextButton):
 
 class DisplayText:
     DEFAULT_FONT_SIZE = 32
-    DEFAULT_FONT_NAME = "notosansmath"
+    DEFAULT_FONT_NAME = "dejavumathtexgyre"
 
     DEFAULT_FONT_COLOUR = (0, 0, 0)
 

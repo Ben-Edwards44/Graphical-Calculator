@@ -13,18 +13,16 @@ class MainMenu:
     MODE_NAMES = [
         ["Calculator", "2D grapher"],
         ["Equation", "Simul Equation"],
-        ["Matrix"]
     ]
 
     #the functions called when the corresponding mode button is clicked - needs to match up with MODE_NAMES
     MODE_CLICK_EVENTS = [
         [calculator.main, grapher.main],
         [equation.main, simul_equation.main],
-        [matrix.main]
     ]
 
-    BUTTON_WIDTH = 220
-    BUTTON_HEIGHT = 50
+    BUTTON_WIDTH = 250
+    BUTTON_HEIGHT = 60
 
     BUTTON_PADDING_X = 10  #distance between each mode button in the grid
     BUTTON_PADDING_Y = 10  #distance between each mode button in the grid

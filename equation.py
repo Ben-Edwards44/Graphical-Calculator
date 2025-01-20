@@ -144,7 +144,10 @@ class EquationMenu:
 
 
 class EquationBox:
-    DECIMAL_PLACES = 2
+    DECIMAL_PLACES = 4
+
+    SOLUTION_MIN_X = -100
+    SOLUTION_MAX_X = 100
 
     def __init__(self, window, equation_string):
         self.window = window
@@ -162,7 +165,7 @@ class EquationBox:
         solutions = self.solve_equation()
 
         if len(solutions) == 0:
-            return "none in range"
+            return f"none for {EquationBox.SOLUTION_MIN_X}<x<{EquationBox.SOLUTION_MAX_X}"
         
         solutions_strings = [self.solution_to_string(solution) for solution in solutions]
         solution_text = f"x={','.join(solutions_strings)}"
@@ -171,7 +174,7 @@ class EquationBox:
 
     def solve_equation(self):
         try:
-            solutions = equation_utils.solve_equation(self.equation_string, -10, 10)
+            solutions = equation_utils.solve_equation(self.equation_string, EquationBox.SOLUTION_MIN_X, EquationBox.SOLUTION_MAX_X)
         except:
             #the user has entered an invalid equation: no solutions will be displayed
             solutions = []
