@@ -1,3 +1,6 @@
+import calculator_utils
+
+
 class ArbitraryEquation:
     SMALL_X_STEP = 0.01
 
@@ -65,3 +68,16 @@ def is_new_element(list, num, tolerance):
             return False  #already in list
 
     return True
+
+
+def solve_equation(equation_string, min, max):
+    lhs, rhs = equation_string.split("=")
+
+    lhs_expression = calculator_utils.AlgebraicInfixExpression(lhs)
+    rhs_expression = calculator_utils.AlgebraicInfixExpression(rhs)
+
+    equation_solver = ArbitraryEquation(lhs_expression, rhs_expression, "x")
+
+    solutions = equation_solver.find_all_solutions(min, max, {})
+
+    return solutions
