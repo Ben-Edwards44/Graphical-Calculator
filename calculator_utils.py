@@ -81,32 +81,25 @@ class Token:
         
         return self.string
 
-    def get_type(self, string):
-        if len(string) == 1:
-            if string in Token.OPERATOR_PRECEDENCE.keys():
-                return Token.OPERATOR_TYPE
-            elif string == "(" or string == ")":
-                return Token.BRACKET_TYPE
-            elif string in DIGITS or string == ".":
-                return Token.NUMBER_TYPE
-            elif string in Token.ALGEBRA_TERMS:
-                return Token.ALGEBRA_TERM_TYPE
-            elif string in Token.CONSTANTS.keys():
-                return Token.CONSTANT_TYPE
-            else:
-                return Token.FUNCTION_TYPE  #this must be the start of a function (like the 's' from 'sin')
+    def get_char_type(self, string):
+        if string in Token.OPERATOR_PRECEDENCE.keys():
+            return Token.OPERATOR_TYPE
+        elif string == "(" or string == ")":
+            return Token.BRACKET_TYPE
+        elif string in DIGITS or string == ".":
+            return Token.NUMBER_TYPE
+        elif string in Token.ALGEBRA_TERMS:
+            return Token.ALGEBRA_TERM_TYPE
+        elif string in Token.CONSTANTS.keys():
+            return Token.CONSTANT_TYPE
         else:
-            #the string is either a number (longer than one digit) or a function
-            is_number = True
-            for char in string:
-                if char not in DIGITS and char != ".":
-                    is_number = False
-                    break
+            return Token.FUNCTION_TYPE  #this must be the start of a function (like the 's' from 'sin')
+            
+    def is_one_char_token(self):
+        #return whether this token is only supposed to be one character long
+        multiple_char_tokens = [Token.NUMBER_TYPE, Token.FUNCTION_TYPE]
 
-            if is_number:
-                return Token.NUMBER_TYPE
-            else:
-                return Token.FUNCTION_TYPE
+        return self.type not in multiple_char_tokens
             
     def set_number(self, num):
         #set this token to be a number
@@ -122,14 +115,14 @@ class Token:
         #check whether the new_char should be added to the token. If so, add it. Return whether the char has been added
         if self.string == "":
             self.string = new_char
-            self.type = self.get_type(self.string)
+            self.type = self.get_char_type(self.string)
 
             return True
         
-        type_of_char = self.get_type(new_char)
+        type_of_char = self.get_char_type(new_char)
 
         #if the char is a different token type or the current token should only be 1 char long (open bracket, close bracket, operator, term), this char is a completely new token and should not be added
-        one_char_token = self.is_open_bracket() or self.is_close_bracket() or self.is_algebra_term() or self.is_operator() or self.is_constant()
+        one_char_token = self.is_one_char_token()
         should_add_char = type_of_char == self.type and not one_char_token
 
         if should_add_char:
