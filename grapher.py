@@ -299,9 +299,9 @@ class ImplicitGraph(Graph):
 
 class GrapherMenu:
     GRAPH_COLOURS = (
-        (255, 0, 0),
         (0, 255, 0),
         (0, 0, 255),
+        (255, 0, 0),
         (252, 219, 5),
         (252, 5, 236),
         (252, 120, 5)
