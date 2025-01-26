@@ -99,7 +99,7 @@ class CalculatorMenu:
                     last_expression = self.expression_boxes[-1]
                     prev_ans = last_expression.answer_string
                 else:
-                    prev_ans = 0
+                    prev_ans = "0"
 
                 return prev_ans
             case "sqrt":
