@@ -172,8 +172,7 @@ class ExpressionBox:
             answer_string = self.anser_to_string(answer)
         except:
             #the user has entered an invalid expression: an error will be displayed
-            self.expression_string = "ERROR"
-            answer_string = "0"
+            answer_string = "ERROR"
 
         return answer_string
     
