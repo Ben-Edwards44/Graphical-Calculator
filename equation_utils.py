@@ -51,6 +51,13 @@ class ArbitraryEquation:
 
         return variable
     
+    def check_solution(self, all_solutions, solution, min, max):
+        solves_equation = abs(self.evaluate_equals_zero(solution)) < ArbitraryEquation.TOLERANCE  #the Newton-Raphson method does not always converge, so sometimes gives numbers that are not solutions
+        in_range = min <= solution <= max
+        is_new = is_new_element(all_solutions, solution, ArbitraryEquation.TOLERANCE)
+
+        return solves_equation and in_range and is_new
+
     def find_all_solutions(self, min, max, known_variable_substitutions):
         #find all the solutions to the equation in the range min <= solution <= max
         self.set_variable_substitutions(known_variable_substitutions)
@@ -61,9 +68,8 @@ class ArbitraryEquation:
         for step in range(ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION):
             start_x = min + step * x_step
             solution = self.solve(start_x)
-            is_actual_solution = abs(self.evaluate_equals_zero(solution)) < ArbitraryEquation.TOLERANCE  #the Newton-Raphson method does not always converge, so sometimes gives numbers that are not solutions
 
-            if min <= solution <= max and is_new_element(solutions, solution, ArbitraryEquation.TOLERANCE) and is_actual_solution:
+            if self.check_solution(solutions, solution, min, max):
                 solutions.append(solution)
 
         return solutions
