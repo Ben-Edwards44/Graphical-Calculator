@@ -36,6 +36,8 @@ class CalculatorMenu:
         self.char_buttons = self.setup_char_buttons()
         self.background_rect = self.setup_background_rect()
 
+    get_go_back = lambda self: self.go_back
+
     def setup_heading_text(self):
         heading_text = gui.DisplayText("Calculator", gui.HEADING_CENTER_POS)
         heading_text.set_font_size(gui.HEADING_FONT_SIZE)
@@ -196,6 +198,6 @@ class ExpressionBox:
 def main(window):
     menu = CalculatorMenu(window)
 
-    while not menu.go_back:
+    while not menu.get_go_back():
         menu.check_user_input()
         menu.draw()

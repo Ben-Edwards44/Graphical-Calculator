@@ -38,6 +38,8 @@ class SimulEquationMenu:
 
         self.equations = self.create_equations(SimulEquationMenu.START_NUM_EQUATIONS)
         
+    get_go_back = lambda self: self.go_back
+
     def setup_solve_button(self):
         solve_button = gui.ColourChangeButton(SimulEquationMenu.SOLVE_BUTTON_TOP_LEFT, SimulEquationMenu.SOLVE_BUTTON_WIDTH, SimulEquationMenu.SOLVE_BUTTON_HEIGHT, "Solve")
 
@@ -270,6 +272,6 @@ class Constant(Variable):
 def main(window):
     menu = SimulEquationMenu(window)
 
-    while not menu.go_back:
+    while not menu.get_go_back():
         menu.check_user_input()
         menu.draw()
