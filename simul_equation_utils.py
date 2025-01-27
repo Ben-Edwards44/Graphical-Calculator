@@ -122,6 +122,28 @@ class SquareMatrix(Matrix):
 
         return det
     
+    def get_matrix_minors(self):
+        minor_matrix = [[0 for _ in range(self.width)] for _ in range(self.height)]
+        for x in range(self.width):
+            for y in range(self.height):
+                minor = self.get_minor(x, y)
+                minor_det = minor.determinant()
+
+                minor_matrix[x][y] = minor_det
+
+        return minor_matrix
+    
+    def get_cofactor_matrix(self, minor_matrix):
+        cofactor_matrix_items = [[0 for _ in range(self.width)] for _ in range(self.height)]
+        for x in range(self.width):
+            sign = 1 if x % 2 == 0 else -1
+
+            for y in range(self.height):
+                cofactor_matrix_items[x][y] = sign * minor_matrix[x][y]
+                sign *= -1
+
+        return SquareMatrix(cofactor_matrix_items)
+    
     def inverse(self):
         if self.width == 2 and self.height == 2:
             new_items = [[self.items[1][1], -self.items[0][1]],
@@ -133,25 +155,10 @@ class SquareMatrix(Matrix):
             scaled_inverse_mat = inverse_mat.scalar_multiply(scalar)
 
             return scaled_inverse_mat
+
+        minor_matrix = self.get_matrix_minors()
+        cofactor_matrix = self.get_cofactor_matrix(minor_matrix)
         
-        minor_matrix_items = [[0 for _ in range(self.width)] for _ in range(self.height)]
-        for x in range(self.width):
-            for y in range(self.height):
-                minor = self.get_minor(x, y)
-                minor_det = minor.determinant()
-
-                minor_matrix_items[x][y] = minor_det
-
-        cofactor_matrix_items = [[0 for _ in range(self.width)] for _ in range(self.height)]
-        for x in range(self.width):
-            sign = 1 if x % 2 == 0 else -1
-
-            for y in range(self.height):
-                cofactor_matrix_items[x][y] = sign * minor_matrix_items[x][y]
-                sign *= -1
-
-
-        cofactor_matrix = SquareMatrix(cofactor_matrix_items)
         adjoint_matrix = cofactor_matrix.transpose()
 
         det = self.determinant()
