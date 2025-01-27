@@ -37,7 +37,11 @@ class Axis:
 
         self.prev_mouse_pos = None
 
+        self.view_changed = False
+
         self.pixel_width = self.calculate_pixel_width()
+
+    get_view_changed = lambda self: self.view_changed
 
     def calculate_pixel_width(self):
         #calculate the amount of axis space taken up by one pixel - needed for sampling each pixel multiple times
@@ -143,6 +147,8 @@ class Axis:
             line_axis_y -= axis_spacing
 
     def translate(self, x_translation_pixels, y_translation_pixels):
+        self.view_changed = True
+
         #when the user clicks and drags, we need to update the bounds of the axis
         x_translation = x_translation_pixels / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X) * self.width
         y_translation = y_translation_pixels / gui.SCREEN_HEIGHT * self.height
@@ -155,6 +161,8 @@ class Axis:
         self.max_y += y_translation
 
     def zoom(self, mouse_scroll_dir):
+        self.view_changed = True
+
         if mouse_scroll_dir == 1:
             zoom_factor = Axis.ZOOM_FACTOR  #zoom in
         else:
@@ -194,6 +202,8 @@ class Axis:
             self.zoom(event.y)
 
     def check_user_input(self):
+        self.view_changed = False  #this will be overwritten if the user scrolls or drags their mouse
+
         self.check_mouse_drag()
         self.check_mouse_scroll()
 
@@ -257,8 +267,8 @@ class Graph:
     def draw(self):
         if self.equation_string == "": return  #graph equation has not yet been set
 
-        if self.pixel_points_on_graph is None:
-            #we need to calcluate what points are on the graph because this has not yet been done
+        if self.pixel_points_on_graph is None or self.axis.get_view_changed():
+            #we need to calcluate what points are on the graph because this has not yet been done, or the axis has changed
             self.pixel_points_on_graph = self.get_points_on_graph()
 
         for x, y in self.pixel_points_on_graph:
