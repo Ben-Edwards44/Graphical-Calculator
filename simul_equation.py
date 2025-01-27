@@ -30,6 +30,7 @@ class SimulEquationMenu:
 
         self.go_back = False
 
+        #create all elements in the GUI
         self.solve_button = self.setup_solve_button()
         self.back_button = gui.create_back_button()
         self.num_equation_input = self.setup_num_equation_input()

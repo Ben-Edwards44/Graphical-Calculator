@@ -29,6 +29,7 @@ class CalculatorMenu:
 
         self.expression_boxes = []
 
+        #create all elements in the GUI
         self.heading_text = self.setup_heading_text()
         self.expression_input_box = self.setup_expression_input()
         self.back_button = gui.create_back_button()

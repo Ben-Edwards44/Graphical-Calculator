@@ -29,6 +29,7 @@ class EquationMenu:
 
         self.equation_boxes = []
 
+        #create all elements in the GUI
         self.heading_text = self.setup_heading_text()
         self.equation_input_box = self.setup_equation_input()
         self.back_button = gui.create_back_button()

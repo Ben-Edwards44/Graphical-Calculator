@@ -357,6 +357,7 @@ class GrapherMenu:
 
         self.go_back = False
 
+        #create all elements in the GUI
         self.axis = self.setup_axis()
         self.graph_inputs = self.setup_graph_inputs()
         self.graphs = self.setup_graphs()
