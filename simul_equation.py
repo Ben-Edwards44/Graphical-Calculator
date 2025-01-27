@@ -141,7 +141,7 @@ class Equation:
 
         self.top_left = self.calculate_top_left(equation_index)
 
-        self.variables, self.constant = self.create_elements(num_variables)
+        self.variable_coefficients, self.constant = self.create_elements(num_variables)
 
     def calculate_top_left(self, equation_index):
         y_step = Equation.HEIGHT + Equation.PADDING_Y
@@ -167,7 +167,7 @@ class Equation:
     
     def get_variable_coefficients(self):
         #evaluate the coefficients of each variable
-        coefficients = [variable.get_coefficient() for variable in self.variables]
+        coefficients = [variable.get_coefficient() for variable in self.variable_coefficients]
 
         return coefficients
     
@@ -177,13 +177,13 @@ class Equation:
         return constant
     
     def check_user_input(self):
-        for variable in self.variables:
+        for variable in self.variable_coefficients:
             variable.check_user_input()
 
         self.constant.check_user_input()
 
     def draw(self):
-        for variable in self.variables:
+        for variable in self.variable_coefficients:
             variable.draw()
 
         self.constant.draw()
