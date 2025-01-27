@@ -84,7 +84,7 @@ class SimulEquationMenu:
         equation_system = simul_equation_utils.SystemEquations(equation_variables, equation_constants)
         solutions = equation_system.solve()
 
-        self.display_solutions(solutions)
+        return solutions
 
     def update_num_equations(self):
         self.num_equation_input.check_user_input()
@@ -111,7 +111,10 @@ class SimulEquationMenu:
             equation.check_user_input()
 
         if self.back_button.is_clicked(): self.go_back = True
-        if self.solve_button.is_clicked(): self.solve_equations()
+
+        if self.solve_button.is_clicked(): 
+            solutions = self.solve_equations()
+            self.display_solutions(solutions)
 
         self.update_num_equations()
 
