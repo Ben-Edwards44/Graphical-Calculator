@@ -113,7 +113,7 @@ class Axis:
         
         return axis_spacing
     
-    def calculate_start_point(self, axis_spacing, ideal_start):
+    def calculate_first_line_pos(self, axis_spacing, ideal_start):
         #calculate the position of the first background line to be drawn
         threshold_steps = abs(ideal_start) / axis_spacing  #this is the number of axis_spacing steps we need to take to get from the origin to the ideal_start point
         steps = int(threshold_steps)
@@ -128,7 +128,7 @@ class Axis:
         axis_spacing = self.calculate_line_spacing(self.min_x, self.max_x)
 
         #draw lines from left to right
-        line_axis_x = self.calculate_start_point(axis_spacing, self.min_x)
+        line_axis_x = self.calculate_first_line_pos(axis_spacing, self.min_x)
         while line_axis_x <= self.max_x:
             line_pixel_x = self.axis_x_to_pixel_x(line_axis_x)
             pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (line_pixel_x, 0), (line_pixel_x, gui.SCREEN_HEIGHT), Axis.BACKGROUND_LINE_WIDTH)
@@ -139,7 +139,7 @@ class Axis:
         axis_spacing = self.calculate_line_spacing(self.min_y, self.max_y)
 
         #draw lines from top to bottom
-        line_axis_y = self.calculate_start_point(axis_spacing, self.max_y)
+        line_axis_y = self.calculate_first_line_pos(axis_spacing, self.max_y)
         while line_axis_y >= self.min_y:
             line_pixel_y = self.axis_y_to_pixel_y(line_axis_y)
             pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (Axis.PIXEL_INDENT_X, line_pixel_y), (gui.SCREEN_WIDTH, line_pixel_y), Axis.BACKGROUND_LINE_WIDTH)
