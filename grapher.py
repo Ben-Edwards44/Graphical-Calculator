@@ -415,6 +415,8 @@ class GrapherMenu:
             input_box.check_user_input()
 
         self.update_graphs()
+
+        gui.check_user_quit()
         
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
@@ -473,5 +475,3 @@ def main(window):
     while not menu.go_back:
         menu.check_user_input()
         menu.draw()
-
-        gui.check_user_quit()

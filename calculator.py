@@ -127,6 +127,8 @@ class CalculatorMenu:
                     text_to_add = self.get_char_button_text(char)
                     self.expression_input_box.input_text(text_to_add)
 
+        gui.check_user_quit()
+
     def draw_expression_boxes(self):
         width, height, top_left_x = self.get_expression_box_dimensions()
 
@@ -197,5 +199,3 @@ def main(window):
     while not menu.go_back:
         menu.check_user_input()
         menu.draw()
-
-        gui.check_user_quit()

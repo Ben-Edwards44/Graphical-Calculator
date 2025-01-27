@@ -119,6 +119,8 @@ class SimulEquationMenu:
 
         self.update_num_equations()
 
+        gui.check_user_quit()
+
     def draw(self):
         self.window.fill(gui.BACKGROUND_COLOUR)
 
@@ -271,5 +273,3 @@ def main(window):
     while not menu.go_back:
         menu.check_user_input()
         menu.draw()
-
-        gui.check_user_quit()
