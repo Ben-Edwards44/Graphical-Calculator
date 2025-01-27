@@ -17,16 +17,23 @@ class Axis:
 
     DESIRED_NUM_BACKGROUND_LINES = 10
 
-    def __init__(self, window, min_x, max_x, min_y, max_y):
+    ZOOM_FACTOR = 0.9
+
+    MIN_X = -10
+    MAX_X = 10
+    MIN_Y = -10
+    MAX_Y = 10
+
+    def __init__(self, window):
         self.window = window
 
-        self.min_x = min_x
-        self.max_x = max_x
-        self.min_y = min_y
-        self.max_y = max_y
+        self.min_x = Axis.MIN_X
+        self.max_x = Axis.MAX_X
+        self.min_y = Axis.MIN_Y
+        self.max_y = Axis.MAX_Y
 
-        self.width = max_x - min_x
-        self.height = max_y - min_y
+        self.width = self.max_x - self.min_x
+        self.height = self.max_y - self.min_y
 
         self.prev_mouse_pos = None
 
@@ -147,6 +154,21 @@ class Axis:
         self.min_y += y_translation
         self.max_y += y_translation
 
+    def zoom(self, mouse_scroll_dir):
+        if mouse_scroll_dir == 1:
+            zoom_factor = Axis.ZOOM_FACTOR  #zoom in
+        else:
+            zoom_factor = 1 / Axis.ZOOM_FACTOR  #zoom out
+
+        self.min_x *= zoom_factor
+        self.max_x *= zoom_factor
+
+        self.min_y *= zoom_factor
+        self.max_y *= zoom_factor
+
+        self.width = self.max_x - self.min_x
+        self.height = self.max_y - self.min_y
+
     def check_mouse_drag(self):
         #check if the user is dragging their mouse
         if pygame.mouse.get_pressed()[0]:
@@ -164,8 +186,16 @@ class Axis:
             #the user has stopped dragging, so set prev_mouse_pos to None to stop the axis being translated further
             self.prev_mouse_pos = None
 
+    def check_mouse_scroll(self):
+        #check if the user is scrolling
+        scroll_events = pygame.event.get(pygame.MOUSEWHEEL)
+
+        for event in scroll_events:
+            self.zoom(event.y)
+
     def check_user_input(self):
         self.check_mouse_drag()
+        self.check_mouse_scroll()
 
     def draw(self):
         self.draw_horizontal_background_lines()
@@ -340,7 +370,7 @@ class GrapherMenu:
         return graph_inputs
     
     def setup_axis(self):
-        axis = Axis(self.window, -10, 10, -10, 10)
+        axis = Axis(self.window)
 
         return axis
     
