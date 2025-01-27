@@ -160,7 +160,7 @@ class ExpressionBox:
 
         self.answer_string = self.evaluate_expression()
 
-    def anser_to_string(self, answer):
+    def answer_to_string(self, answer):
         correct_dp = round(answer, ExpressionBox.DECIMAL_PLACES)
         string = str(correct_dp)
 
@@ -169,7 +169,7 @@ class ExpressionBox:
     def evaluate_expression(self):
         try:
             answer = calculator_utils.evaluate_expression(self.expression_string)
-            answer_string = self.anser_to_string(answer)
+            answer_string = self.answer_to_string(answer)
         except:
             #the user has entered an invalid expression: an error will be displayed
             answer_string = "ERROR"
