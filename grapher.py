@@ -401,7 +401,7 @@ class GrapherMenu:
 
             if prev_graph is None or inputted_equation != prev_graph.equation_string:
                 #the graph's equation has changed - replace the graph object with a new one
-                new_graph = get_new_graph(inputted_equation, self.window, self.axis, GrapherMenu.GRAPH_COLOURS[inx])
+                new_graph = create_new_graph(inputted_equation, self.window, self.axis, GrapherMenu.GRAPH_COLOURS[inx])
 
                 self.graphs[inx] = new_graph
 
@@ -446,7 +446,7 @@ def is_explicit_function(equation_string):
         return False
 
 
-def get_new_graph(equation_string, window, axis, colour):
+def create_new_graph(equation_string, window, axis, colour):
     #return a graph object with the equation string as its equation. If the equation string is invalid, return None
     if "=" not in equation_string: return None
 
