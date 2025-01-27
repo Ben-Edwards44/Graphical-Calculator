@@ -34,11 +34,10 @@ class ArbitraryEquation:
 
         return evaluation
 
-    def differentiate(self, variable_value):
-        y1 = self.evaluate_equals_zero(variable_value)
+    def differentiate(self, variable_value, y1_evaluation):
         y2 = self.evaluate_equals_zero(variable_value + ArbitraryEquation.SMALL_X_STEP)
 
-        gradient = (y2 - y1) / ArbitraryEquation.SMALL_X_STEP
+        gradient = (y2 - y1_evaluation) / ArbitraryEquation.SMALL_X_STEP
 
         return gradient
     
@@ -47,7 +46,8 @@ class ArbitraryEquation:
 
         #apply the Newton-Raphson method to solve the equation
         for _ in range(ArbitraryEquation.NUM_NEWTON_RAPHSON_STEPS):
-            variable = variable - self.evaluate_equals_zero(variable) / self.differentiate(variable)
+            evaluation = self.evaluate_equals_zero(variable)
+            variable = variable - evaluation / self.differentiate(variable, evaluation)
 
         return variable
     
