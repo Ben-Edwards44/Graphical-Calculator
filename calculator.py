@@ -22,6 +22,8 @@ class CalculatorMenu:
     EXPRESSION_BOX_PADDING_X = 8
     EXPRESSION_BOX_PADDING_Y = 10
 
+    BACKGROUND_RECT_COLOUR = (0, 0, 0)
+
     def __init__(self, window):
         self.window = window
 
@@ -80,6 +82,7 @@ class CalculatorMenu:
 
         background_rect.set_border_width(CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH)
         background_rect.set_corner_radius(CalculatorMenu.BACKGROUND_BOX_CORNER_RADIUS)
+        background_rect.set_background_colour(CalculatorMenu.BACKGROUND_RECT_COLOUR)
 
         return background_rect
     
@@ -159,6 +162,8 @@ class CalculatorMenu:
 class ExpressionBox:
     DECIMAL_PLACES = 5
 
+    COLOUR = (110, 115, 123)
+
     def __init__(self, window, expression_string):
         self.window = window
         self.expression_string = expression_string
@@ -181,8 +186,15 @@ class ExpressionBox:
 
         return answer_string
     
-    def draw(self, top_left_pos, width, height):
+    def setup_background_rect(self, top_left_pos, width, height):
+        #the background rect just looks like a button, but it is never checked to see if its clicked
         background_rect = gui.BasicButton(top_left_pos, width, height)
+        background_rect.set_background_colour(ExpressionBox.COLOUR)
+
+        return background_rect
+    
+    def draw(self, top_left_pos, width, height):
+        background_rect = self.setup_background_rect(top_left_pos, width, height)
 
         expression_text = gui.DisplayText(self.expression_string, top_left_pos)
         answer_text = gui.DisplayText(self.answer_string, top_left_pos)

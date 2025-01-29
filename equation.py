@@ -22,6 +22,8 @@ class EquationMenu:
     EQUATION_BOX_PADDING_X = 8
     EQUATION_BOX_PADDING_Y = 10
 
+    BACKGROUND_RECT_COLOUR = (0, 0, 0)
+
     def __init__(self, window):
         self.window = window
 
@@ -80,6 +82,7 @@ class EquationMenu:
 
         background_rect.set_border_width(EquationMenu.BACKGROUND_BOX_BORDER_WIDTH)
         background_rect.set_corner_radius(EquationMenu.BACKGROUND_BOX_CORNER_RADIUS)
+        background_rect.set_background_colour(EquationMenu.BACKGROUND_RECT_COLOUR)
 
         return background_rect
     
@@ -154,6 +157,8 @@ class EquationBox:
     SOLUTION_MIN_X = -100
     SOLUTION_MAX_X = 100
 
+    COLOUR = (110, 115, 123)
+
     def __init__(self, window, equation_string):
         self.window = window
         self.equation_string = equation_string
@@ -186,8 +191,15 @@ class EquationBox:
 
         return solutions
     
-    def draw(self, top_left_pos, width, height):
+    def setup_background_rect(self, top_left_pos, width, height):
+        #the background rect just looks like a button, but it is never checked to see if its clicked
         background_rect = gui.BasicButton(top_left_pos, width, height)
+        background_rect.set_background_colour(EquationBox.COLOUR)
+
+        return background_rect
+    
+    def draw(self, top_left_pos, width, height):
+        background_rect = self.setup_background_rect(top_left_pos, width, height)
 
         equation_text = gui.DisplayText(self.equation_string, top_left_pos)
         solution_text = gui.DisplayText(self.solution_string, top_left_pos)

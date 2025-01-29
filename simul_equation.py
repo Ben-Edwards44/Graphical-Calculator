@@ -10,7 +10,7 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 class SimulEquationMenu:
     SOLVE_BUTTON_TOP_LEFT = (300, 20)
-    SOLVE_BUTTON_WIDTH = 80
+    SOLVE_BUTTON_WIDTH = 100
     SOLVE_BUTTON_HEIGHT = 50
 
     START_NUM_EQUATIONS = 3
@@ -18,7 +18,7 @@ class SimulEquationMenu:
     MAX_NUM_EQUATIONS = 6
 
     NUM_EQUATION_TOP_LEFT = (500, 20)
-    NUM_EQUATION_WIDTH = 80
+    NUM_EQUATION_WIDTH = 280
     NUM_EQUATION_HEIGHT = 50
 
     SOLUTION_TOP_LEFT = (40, gui.SCREEN_HEIGHT - 100)

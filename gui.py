@@ -11,16 +11,16 @@ BACK_BUTTON_POS = (10, 10)
 BACK_BUTTON_WIDTH = 40
 BACK_BUTTON_HEIGHT = 40
 
-BACKGROUND_COLOUR = (200, 200, 200)
+BACKGROUND_COLOUR = (50, 54, 60)
 
 
 class BasicButton:
-    DEFAULT_BORDER_WIDTH = 4
+    BORDER_WIDTH = 2
 
-    DEFAULT_BORDER_COLOUR = (150, 150, 150)
-    DEFAULT_BACKGROUND_COLOUR = (255, 255, 255)
+    BORDER_COLOUR = (255, 255, 255)
+    BACKGROUND_COLOUR = (21, 64, 98)
 
-    DEFAULT_CORNER_RADIUS = 12  #specifies how rounded the corners should be
+    CORNER_RADIUS = 12  #specifies how rounded the corners should be
 
     def __init__(self, top_left_pos, width, height):
         self.top_left_x, self.top_left_y = top_left_pos
@@ -31,12 +31,12 @@ class BasicButton:
         self.center_x = self.top_left_x + self.width // 2
         self.center_y = self.top_left_y + self.height // 2
 
-        self.border_width = BasicButton.DEFAULT_BORDER_WIDTH
+        self.border_width = BasicButton.BORDER_WIDTH
 
-        self.border_colour = BasicButton.DEFAULT_BORDER_COLOUR
-        self.background_colour = BasicButton.DEFAULT_BACKGROUND_COLOUR
+        self.border_colour = BasicButton.BORDER_COLOUR
+        self.background_colour = BasicButton.BACKGROUND_COLOUR
 
-        self.corner_radius = BasicButton.DEFAULT_CORNER_RADIUS
+        self.corner_radius = BasicButton.CORNER_RADIUS
 
         self.has_been_clicked = False
 
@@ -120,16 +120,16 @@ class TextButton(BasicButton):
 
 
 class ColourChangeButton(TextButton):
-    DEFAULT_NORMAL_COLOUR = (255, 0, 0)
-    DEFAULT_HOVERED_COLOUR = (0, 255, 0)
-    DEFAULT_CLICKED_COLOUR = (0, 0, 255)
+    NORMAL_COLOUR = (21, 64, 98)
+    HOVERED_COLOUR = (17, 29, 38)
+    CLICKED_COLOUR = (0, 0, 0)
 
     def __init__(self, top_left_pos, width, height, text):
         super().__init__(top_left_pos, width, height, text)
 
-        self.normal_colour = ColourChangeButton.DEFAULT_NORMAL_COLOUR
-        self.hovered_colour = ColourChangeButton.DEFAULT_HOVERED_COLOUR
-        self.clicked_colour = ColourChangeButton.DEFAULT_CLICKED_COLOUR
+        self.normal_colour = ColourChangeButton.NORMAL_COLOUR
+        self.hovered_colour = ColourChangeButton.HOVERED_COLOUR
+        self.clicked_colour = ColourChangeButton.CLICKED_COLOUR
 
     def set_normal_colour(self, new_colour):
         self.normal_colour = new_colour
@@ -152,24 +152,24 @@ class ColourChangeButton(TextButton):
 
 
 class DisplayText:
-    DEFAULT_FONT_SIZE = 32
-    DEFAULT_FONT_NAME = "dejavumathtexgyre"
+    FONT_SIZE = 32
+    FONT_NAME = "dejavumathtexgyre"
 
-    DEFAULT_FONT_COLOUR = (0, 0, 0)
+    FONT_COLOUR = (255, 255, 255)
 
     def __init__(self, displayed_text, center_pos):
         self.displayed_text = displayed_text
         self.center_pos = center_pos
 
-        self.font_colour = DisplayText.DEFAULT_FONT_COLOUR
+        self.font_colour = DisplayText.FONT_COLOUR
 
-        self.font = pygame.font.SysFont(DisplayText.DEFAULT_FONT_NAME, DisplayText.DEFAULT_FONT_SIZE)
+        self.font = pygame.font.SysFont(DisplayText.FONT_NAME, DisplayText.FONT_SIZE)
 
     def set_font_colour(self, new_font_colour):
         self.font_colour = new_font_colour
 
     def set_font_size(self, new_font_size):
-        self.font = pygame.font.SysFont(DisplayText.DEFAULT_FONT_NAME, new_font_size)
+        self.font = pygame.font.SysFont(DisplayText.FONT_NAME, new_font_size)
 
     def set_displayed_text(self, new_displayed_text):
         self.displayed_text = new_displayed_text
@@ -210,8 +210,11 @@ class DisplayText:
 
 
 class TextInput:
-    DEFAULT_SELECTED_COLOUR = (100, 100, 100)
-    DEFAULT_NON_SELECTED_COLOUR = (200, 200, 200)
+    SELECTED_COLOUR = (32, 34, 37)
+    NON_SELECTED_COLOUR = (110, 115, 123)
+
+    HOVERED_COLOUR = (50, 54, 60)
+    CLICKED_COLOUR = (0, 0, 0)
 
     def __init__(self, top_left_pos, width, height, prompt_text):
         self.prompt_text = prompt_text
@@ -220,10 +223,10 @@ class TextInput:
         self.selected = False
         self.can_update_selected = True
 
-        self.selected_colour = TextInput.DEFAULT_SELECTED_COLOUR
-        self.non_selected_colour = TextInput.DEFAULT_NON_SELECTED_COLOUR
+        self.selected_colour = TextInput.SELECTED_COLOUR
+        self.non_selected_colour = TextInput.NON_SELECTED_COLOUR
 
-        self.button = ColourChangeButton(top_left_pos, width, height, prompt_text)
+        self.button = self.setup_button(top_left_pos, width, height, prompt_text)
 
     def set_selected_colour(self, new_colour):
         self.selected_colour = new_colour
@@ -236,6 +239,14 @@ class TextInput:
 
     def get_inputted_text(self):
         return self.inputted_text
+    
+    def setup_button(self, top_left_pos, width, height, prompt_text):
+        button = ColourChangeButton(top_left_pos, width, height, prompt_text)
+
+        button.set_hovered_colour(TextInput.HOVERED_COLOUR)
+        button.set_clicked_colour(TextInput.CLICKED_COLOUR)
+
+        return button
 
     def update_selected(self):
         if self.button.is_clicked():
