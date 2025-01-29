@@ -67,15 +67,18 @@ class SimulEquationMenu:
         return equations
     
     def display_solutions(self, solutions):
-        solution_text = ""
-        for variable, solution in zip(ALPHABET, solutions):
-            correct_dp = round(solution, SimulEquationMenu.DECIMAL_PLACES)
-            solution_text += f"{variable}={correct_dp}"
+        if solutions is None:
+            solution_text = "No unique solution"
+        else:
+            solution_text = ""
+            for variable, solution in zip(ALPHABET, solutions):
+                correct_dp = round(solution, SimulEquationMenu.DECIMAL_PLACES)
+                solution_text += f"{variable}={correct_dp}"
 
-            is_final_solution = variable == ALPHABET[len(solutions) - 1]
-            if not is_final_solution:
-                #we only want to add a comma if this is the last solution in the list
-                solution_text += ","
+                is_final_solution = variable == ALPHABET[len(solutions) - 1]
+                if not is_final_solution:
+                    #we only want to add a comma if this is the last solution in the list
+                    solution_text += ","
 
         self.solution_text.set_displayed_text(solution_text)
         self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)  #the displayed text may have changed length, so we need to re-position the text
@@ -84,8 +87,12 @@ class SimulEquationMenu:
         equation_variables = [equation.get_variable_coefficients() for equation in self.equations]
         equation_constants = [equation.get_constant() for equation in self.equations]
 
-        equation_system = simul_equation_utils.SystemEquations(equation_variables, equation_constants)
-        solutions = equation_system.solve()
+        try:
+            equation_system = simul_equation_utils.SystemEquations(equation_variables, equation_constants)
+            solutions = equation_system.solve()
+        except:
+            #the system of equations have no unique solution, or there is an error in the coefficients
+            solutions = None
 
         return solutions
 
