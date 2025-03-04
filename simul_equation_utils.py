@@ -161,8 +161,8 @@ class SquareMatrix(Matrix):
         
         adjoint_matrix = cofactor_matrix.transpose()
 
-        det = self.determinant()
+        scalar = 1 / self.determinant()
 
-        inverse_mat = adjoint_matrix.scalar_multiply(1 / det)
+        inverse_mat = adjoint_matrix.scalar_multiply(scalar)
 
         return inverse_mat
