@@ -89,18 +89,6 @@ class SquareMatrix(Matrix):
 
         return SquareMatrix(new_items)
 
-    def get_minor(self, remove_x, remove_y):
-        minor_items = []
-        for row_index, row in enumerate(self.items):
-            if row_index == remove_x: continue
-
-            minor_row = [item for col_index, item in enumerate(row) if col_index != remove_y]
-            minor_items.append(minor_row)
-
-        minor = SquareMatrix(minor_items)
-
-        return minor
-
     def determinant(self):
         #return the determinant of the matrix
         if self.width == 2 and self.height == 2:
@@ -122,6 +110,18 @@ class SquareMatrix(Matrix):
 
         return det
     
+    def get_minor(self, remove_x, remove_y):
+        minor_items = []
+        for row_index, row in enumerate(self.items):
+            if row_index == remove_x: continue
+
+            minor_row = [item for col_index, item in enumerate(row) if col_index != remove_y]
+            minor_items.append(minor_row)
+
+        minor = SquareMatrix(minor_items)
+
+        return minor
+
     def get_matrix_minors(self):
         minor_matrix = [[0 for _ in range(self.width)] for _ in range(self.height)]
         for x in range(self.width):
