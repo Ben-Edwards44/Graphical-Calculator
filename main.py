@@ -1,6 +1,6 @@
-import gui
 import pygame
 
+import gui
 import about
 import grapher
 import equation
