@@ -53,7 +53,8 @@ class BasicButton:
         self.corner_radius = new_corner_radius
 
     def get_has_been_clicked(self):
-        #if the user clicks on a button for multiple frames, we may not want to register multiple clicks so we check if the button has already been clicked
+        #if the user clicks on a button for multiple frames, we may not want to register multiple clicks
+        #so we check if the button has already been clicked
         return self.has_been_clicked
 
     def is_hovered(self):
