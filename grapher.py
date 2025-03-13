@@ -320,7 +320,8 @@ class ImplicitGraph(Graph):
         lhs_expression = calculator_utils.AlgebraicInfixExpression(left_string)
         rhs_expression = calculator_utils.AlgebraicInfixExpression(right_string)
 
-        equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y")
+        #we need the equation to be solved quickly, not very accurately (so set fast_solve to True)
+        equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y", True)
 
         return equation_solver
 
