@@ -4,17 +4,26 @@ import calculator_utils
 class ArbitraryEquation:
     SMALL_X_STEP = 0.01
 
-    NUM_NEWTON_RAPHSON_STEPS = 6
+    FAST_NEWTON_RAPHSON_STEPS = 6
+    ACCURATE_NEWTON_RAPHSON_STEPS = 20
 
-    SOLUTION_SEARCH_RESOLUTION = 12
-
+    FAST_SEARCH_RESOLUTION = 12
+    ACCURATE_SEARCH_RESOLUTION = 500
+    
     TOLERANCE = 0.01
 
-    def __init__(self, lhs_expression, rhs_expression, variable_to_solve_for):
+    def __init__(self, lhs_expression, rhs_expression, variable_to_solve_for, fast_solve):
         self.lhs = lhs_expression
         self.rhs = rhs_expression
 
         self.variable_name = variable_to_solve_for
+
+        if fast_solve:
+            self.resolution = ArbitraryEquation.FAST_SEARCH_RESOLUTION
+            self.newton_raphson_steps = ArbitraryEquation.FAST_NEWTON_RAPHSON_STEPS
+        else:
+            self.resolution = ArbitraryEquation.ACCURATE_SEARCH_RESOLUTION
+            self.newton_raphson_steps = ArbitraryEquation.ACCURATE_NEWTON_RAPHSON_STEPS
 
         self.variable_substitutions = {}
 
@@ -45,7 +54,7 @@ class ArbitraryEquation:
         variable = start_variable_value
 
         #apply the Newton-Raphson method to solve the equation
-        for _ in range(ArbitraryEquation.NUM_NEWTON_RAPHSON_STEPS):
+        for _ in range(self.newton_raphson_steps):
             evaluation = self.evaluate_equals_zero(variable)
             variable = variable - evaluation / self.differentiate(variable, evaluation)
 
@@ -62,10 +71,10 @@ class ArbitraryEquation:
         #find all the solutions to the equation in the range min <= solution <= max
         self.set_variable_substitutions(known_variable_substitutions)
 
-        x_step = (max - min) / ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION
+        x_step = (max - min) / self.resolution
 
         solutions = []
-        for step in range(ArbitraryEquation.SOLUTION_SEARCH_RESOLUTION):
+        for step in range(self.resolution):
             start_x = min + step * x_step
             solution = self.solve(start_x)
 
@@ -90,7 +99,8 @@ def solve_equation(equation_string, min, max):
     lhs_expression = calculator_utils.AlgebraicInfixExpression(lhs)
     rhs_expression = calculator_utils.AlgebraicInfixExpression(rhs)
 
-    equation_solver = ArbitraryEquation(lhs_expression, rhs_expression, "x")
+    #solve the equation accurately, but more slowly (so set fast_solve to False)
+    equation_solver = ArbitraryEquation(lhs_expression, rhs_expression, "x", False)
 
     solutions = equation_solver.find_all_solutions(min, max, {})
 
