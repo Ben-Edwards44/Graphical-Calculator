@@ -219,8 +219,10 @@ class InfixExpression:
 
             prev_token = tokenised_expression[token_inx - 1]
 
-            prev_can_be_implied = prev_token.is_number() or prev_token.is_close_bracket() or prev_token.is_algebra_term() or prev_token.is_constant()
-            current_can_be_implied = token.is_open_bracket() or token.is_function() or token.is_algebra_term() or prev_token.is_constant()
+            prev_can_be_implied = (prev_token.is_number() or prev_token.is_close_bracket()
+                                   or prev_token.is_algebra_term() or prev_token.is_constant())
+            current_can_be_implied = (token.is_open_bracket() or token.is_function()
+                                     or token.is_algebra_term() or prev_token.is_constant())
 
             if prev_can_be_implied and current_can_be_implied:
                 #insert a multiplication token to make the multiplication explicit
