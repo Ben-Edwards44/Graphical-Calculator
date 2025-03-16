@@ -33,7 +33,8 @@ def setup_heading_text():
 
 
 def setup_about_text():
-    #pygame cannot render newlines, so a new text object needs to be created for each line
+    #pygame cannot render newlines, so a new text object
+    #needs to be created for each line
     lines = ABOUT_TEXT.splitlines()
 
     text_objects = []
