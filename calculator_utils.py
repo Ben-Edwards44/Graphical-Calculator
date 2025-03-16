@@ -193,7 +193,8 @@ class InfixExpression:
                     is_unary = prev_token.is_operator() or prev_token.is_open_bracket()
 
                 if is_unary:
-                    #the number -12 is the same as (-1)*12, therefore multiplying by -1 will ensure it is evaluated correctly
+                    #the number -12 is the same as (-1)*12, therefore multiplying by -1 
+                    #will ensure it is evaluated correctly
                     minus_one = Token()
                     minus_one.set_number("-1")
 
@@ -203,7 +204,9 @@ class InfixExpression:
                     new_expression.append(minus_one)
                     new_expression.append(multiply)
 
-                    continue  #we do not want to append the minus token to the expression, so just continue to the next token
+                    #we do not want to append the minus token to the expression,
+                    #so just continue to the next token
+                    continue
             
             new_expression.append(token)
 
