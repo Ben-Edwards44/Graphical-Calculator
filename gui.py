@@ -306,13 +306,17 @@ class TextInput:
 
 def create_back_button():
     #create a back button in the top left of the screen (same for all modes)
-    back_button = ColourChangeButton(BACK_BUTTON_POS, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, "<-")
+    back_button = ColourChangeButton(BACK_BUTTON_POS,
+                                     BACK_BUTTON_WIDTH, 
+                                     BACK_BUTTON_HEIGHT,
+                                     "<-")
 
     return back_button
 
 
 def calculate_centered_top_left(width, height):
-    #calculate the top left position of an object such that it lies in the center of the screen
+    #calculate the top left position of an object such 
+    #that it lies in the center of the screen
     empty_space_x = SCREEN_WIDTH - width
     empty_space_y = SCREEN_HEIGHT - height
 
@@ -323,7 +327,8 @@ def calculate_centered_top_left(width, height):
 
 
 def check_user_quit():
-    #check whether the user has pressed the quit button in the top right of the window
+    #check whether the user has pressed the quit button
+    #in the top right of the window
     quit_events = pygame.event.get(pygame.QUIT)
 
     if len(quit_events) > 0:
