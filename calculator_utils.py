@@ -152,10 +152,6 @@ class Token:
         func = Token.FUNCTIONS[self.string]
 
         return func(argument)
-    
-    def __repr__(self):
-        #for debugging purposes only
-        return f"<Token: type={self.type}, string={self.string}>"
 
 
 class InfixExpression:
