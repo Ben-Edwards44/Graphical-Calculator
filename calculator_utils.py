@@ -114,7 +114,8 @@ class Token:
         self.type = Token.ALGEBRA_TERM_TYPE
 
     def add_char(self, new_char):
-        #check whether the new_char should be added to the token. If so, add it. Return whether the char has been added
+        #check whether the new_char should be added to the token. If so, add it.
+        #Return whether the char has been added
         if self.string == "":
             self.string = new_char
             self.type = self.get_char_type(self.string)
@@ -123,7 +124,9 @@ class Token:
         
         type_of_char = self.get_char_type(new_char)
 
-        #if the char is a different token type or the current token should only be 1 char long (open bracket, close bracket, operator, term), this char is a completely new token and should not be added
+        #if the char is a different token type or the current token should only be
+        #1 char long (open bracket, close bracket, operator, term), this char is a
+        #completely new token and should not be added
         one_char_token = self.is_one_char_token()
         should_add_char = type_of_char == self.type and not one_char_token
 
