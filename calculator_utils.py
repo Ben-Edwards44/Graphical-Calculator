@@ -71,7 +71,9 @@ class Token:
         
     def get_precedence(self):
         if not self.is_operator():
-            return  #stops an error being thrown when the OPERATOR_PRECEDENCE dictionary is being accessed
+            #stops an error being thrown when the
+            #OPERATOR_PRECEDENCE dictionary is being accessed
+            return
         
         return Token.OPERATOR_PRECEDENCE[self.string]
     
