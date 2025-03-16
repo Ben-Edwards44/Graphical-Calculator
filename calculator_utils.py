@@ -244,8 +244,10 @@ class InfixExpression:
             elif token.is_function():
                 operator_stack.push(token)
             elif token.is_operator():
-                is_operator_on_stack = not operator_stack.is_empty() and not operator_stack.peek().is_open_bracket()
-                is_operator_precendece_higher = is_operator_on_stack and operator_stack.peek().get_precedence() >= token.get_precedence()
+                is_operator_on_stack = (not operator_stack.is_empty() 
+                                        and not operator_stack.peek().is_open_bracket())
+                is_operator_precendece_higher = (is_operator_on_stack and 
+                                                 operator_stack.peek().get_precedence() >= token.get_precedence())
 
                 while is_operator_precendece_higher:
                     #pop the operator on top of the stack onto the output
@@ -253,8 +255,10 @@ class InfixExpression:
                     tokenised_postfix.append(operator_on_stack)
 
                     #update is_operator_precendece_higher to check if we need to loop again
-                    is_operator_on_stack = not operator_stack.is_empty() and not operator_stack.peek().is_open_bracket()
-                    is_operator_precendece_higher = is_operator_on_stack and operator_stack.peek().get_precedence() >= token.get_precedence()
+                    is_operator_on_stack = (not operator_stack.is_empty() 
+                                            and not operator_stack.peek().is_open_bracket())
+                    is_operator_precendece_higher = (is_operator_on_stack and 
+                                                     operator_stack.peek().get_precedence() >= token.get_precedence())
 
                 operator_stack.push(token)  #push the current operator onto the stack
             elif token.is_open_bracket():
