@@ -253,12 +253,18 @@ class TextInput:
         if self.button.is_clicked():
             if self.can_update_selected:
                 self.selected = not self.selected
-                self.can_update_selected = False  #make sure we don't toggle self.selected again until the user has stopped clicking the button
+
+                #make sure we don't toggle self.selected again
+                #until the user has stopped clicking the button
+                self.can_update_selected = False 
         else:
-            self.can_update_selected = True  #user has stopped clicking, so we should update self.selected next time they click
+            #user has stopped clicking, so we should
+            #update self.selected next time they click
+            self.can_update_selected = True  
 
             if pygame.mouse.get_pressed()[0]:
-                #user has clicked somewhere else, so we no longer want this text input to be selected
+                #user has clicked somewhere else, so we no
+                #longer want this text input to be selected
                 self.selected = False
 
     def input_text(self, inputted_text):
