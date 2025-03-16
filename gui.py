@@ -275,9 +275,11 @@ class TextInput:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
-                    self.inputted_text = self.inputted_text[:-1]  #remove the last character of the inputted text
+                    #remove the last character of the inputted text
+                    self.inputted_text = self.inputted_text[:-1]
                 else:
-                    self.input_text(event.unicode)  #add the typed character to the inputted text
+                    #add the typed character to the inputted text
+                    self.input_text(event.unicode)
 
     def check_user_input(self):
         self.update_selected()
