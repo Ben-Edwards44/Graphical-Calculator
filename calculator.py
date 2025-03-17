@@ -90,7 +90,8 @@ class CalculatorMenu:
         width = gui.SCREEN_WIDTH - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
         height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1]
 
-        #although the background rect is not a button, it will be draw exactly the same as one so it is stored as a button object
+        #although the background rect is not a button, it will be 
+        #drawn exactly the same as one so it is stored as a button object
         background_rect = gui.BasicButton(CalculatorMenu.BACKGROUND_BOX_TOP_LEFT, width, height)
 
         background_rect.set_border_width(CalculatorMenu.BACKGROUND_BOX_BORDER_WIDTH)
