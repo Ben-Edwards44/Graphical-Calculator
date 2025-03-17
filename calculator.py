@@ -11,7 +11,8 @@ class CalculatorMenu:
     CHAR_BUTTON_WIDTH = 90
     CHAR_BUTTON_HEIGHT = 50
 
-    CHAR_BUTTON_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 80)  #top left pos of the row of buttons
+    #top left pos of the row of buttons
+    CHAR_BUTTON_TOP_LEFT = (100, gui.SCREEN_HEIGHT - 80)
 
     BACKGROUND_BOX_TOP_LEFT = (100, 100)
     BACKGROUND_BOX_BORDER_WIDTH = 6
