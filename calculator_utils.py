@@ -363,7 +363,9 @@ class AlgebraicInfixExpression(InfixExpression):
 
         evaluation = super().evaluate()
         
-        self.revert_substitution()  #ensures everything is back to normal if we want to substitute different numbers in
+        #ensure everything is back to normal if
+        #we want to substitute different numbers in
+        self.revert_substitution()
 
         return evaluation
 
