@@ -51,7 +51,10 @@ class CalculatorMenu:
         width, height, top_left_x = self.get_expression_box_dimensions()
 
         #position the input box at the bottom of the screen
-        top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.NUM_EXPRESSION_BOXES * (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y) + CalculatorMenu.EXPRESSION_BOX_PADDING_Y
+        top_left_y = (CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + 
+                      CalculatorMenu.NUM_EXPRESSION_BOXES * 
+                      (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y) + 
+                      CalculatorMenu.EXPRESSION_BOX_PADDING_Y)
 
         expression_input_box = gui.TextInput((top_left_x, top_left_y), width, height, "Enter expression:")
         expression_input_box.set_font_size(CalculatorMenu.EXPRESSION_FONT_SIZE)
