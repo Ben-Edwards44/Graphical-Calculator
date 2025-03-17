@@ -159,10 +159,14 @@ class CalculatorMenu:
     def draw_expression_boxes(self):
         width, height, top_left_x = self.get_expression_box_dimensions()
 
-        most_recent_boxes = self.expression_boxes[-CalculatorMenu.NUM_EXPRESSION_BOXES:]  #only draw the most recent expression boxes
+        #only room to draw the most recent expression boxes
+        most_recent_boxes = self.expression_boxes[-CalculatorMenu.NUM_EXPRESSION_BOXES:]
 
         for index, box in enumerate(most_recent_boxes):
-            top_left_y = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + CalculatorMenu.EXPRESSION_BOX_PADDING_Y + index * (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y)
+            top_left_y = (CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] + 
+                          CalculatorMenu.EXPRESSION_BOX_PADDING_Y + 
+                          index * (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y))
+            
             box.draw((top_left_x, top_left_y), width, height)
 
     def draw(self):
