@@ -147,7 +147,8 @@ class CalculatorMenu:
                 char = CalculatorMenu.CHAR_BUTTONS[index]
 
                 if char == "=":
-                    new_expression_box = ExpressionBox(self.window, self.expression_input_box.get_inputted_text())
+                    new_expression_box = ExpressionBox(self.window, 
+                                                       self.expression_input_box.get_inputted_text())
                     self.expression_boxes.append(new_expression_box)
                 else:
                     text_to_add = self.get_char_button_text(char)
