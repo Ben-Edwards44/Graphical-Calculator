@@ -316,7 +316,8 @@ class InfixExpression:
 
                 evaluate_stack.push(result)
 
-        final_result = evaluate_stack.pop()  #evaluation will be only item left in the stack
+        #evaluation will be only item left in the stack
+        final_result = evaluate_stack.pop()
 
         return final_result
     
