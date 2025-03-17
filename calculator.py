@@ -225,8 +225,11 @@ class ExpressionBox:
         expression_text = gui.DisplayText(self.expression_string, top_left_pos)
         answer_text = gui.DisplayText(self.answer_string, top_left_pos)
 
-        expression_text.set_top_left_pos(top_left_pos)  #put the expression on the left of the box
-        answer_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))  #put the answer on the right of the box
+        #put the expression on the left of the box
+        expression_text.set_top_left_pos(top_left_pos)
+        
+        #put the answer on the right of the box
+        answer_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))
 
         background_rect.draw(self.window)
         expression_text.draw(self.window)
