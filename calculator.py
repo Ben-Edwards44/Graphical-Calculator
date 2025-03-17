@@ -102,11 +102,18 @@ class CalculatorMenu:
     
     def get_expression_box_dimensions(self):
         #get the width, height and x coordinate of the top left pos of the expression boxes
-        top_left_x = CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0] + CalculatorMenu.EXPRESSION_BOX_PADDING_X
+        top_left_x = (CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[0]
+                      + CalculatorMenu.EXPRESSION_BOX_PADDING_X)
+        
         width = gui.SCREEN_WIDTH - 2 * top_left_x
 
-        available_height = gui.SCREEN_HEIGHT - 2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1] - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
-        total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)  #we need to +1 to the number of expression boxes because the input box at the bottom also takes up space
+        available_height = (gui.SCREEN_HEIGHT - 
+                            2 * CalculatorMenu.BACKGROUND_BOX_TOP_LEFT[1]
+                            - CalculatorMenu.EXPRESSION_BOX_PADDING_Y)
+        
+        #we need to +1 to the number of expression boxes because 
+        #the input box at the bottom also takes up space
+        total_height = available_height // (CalculatorMenu.NUM_EXPRESSION_BOXES + 1)
         box_height = total_height - CalculatorMenu.EXPRESSION_BOX_PADDING_Y
 
         return width, box_height, top_left_x
