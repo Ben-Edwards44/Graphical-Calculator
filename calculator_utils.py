@@ -329,7 +329,8 @@ class AlgebraicInfixExpression(InfixExpression):
         self.algebra_term_objects = self.replace_algebra_term_tokens()
 
     def replace_algebra_term_tokens(self):
-        #we want all of the 'x' term tokens to be the same object so it is easier and faster to substitute them, same goes for 'y' etc.
+        #we want all of the 'x' term tokens to be the same object so it 
+        #is easier and faster to substitute them, same goes for 'y' etc.
         seen_terms = {}
 
         for inx, token in enumerate(self.postfix_expression):
