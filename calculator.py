@@ -56,7 +56,11 @@ class CalculatorMenu:
                       (height + CalculatorMenu.EXPRESSION_BOX_PADDING_Y) + 
                       CalculatorMenu.EXPRESSION_BOX_PADDING_Y)
 
-        expression_input_box = gui.TextInput((top_left_x, top_left_y), width, height, "Enter expression:")
+        expression_input_box = gui.TextInput((top_left_x, top_left_y), 
+                                             width, 
+                                             height, 
+                                             "Enter expression:")
+        
         expression_input_box.set_font_size(CalculatorMenu.EXPRESSION_FONT_SIZE)
 
         return expression_input_box
