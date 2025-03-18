@@ -38,7 +38,8 @@ class ArbitraryEquation:
         left = self.lhs.evaluate(all_substitutions)
         right = self.rhs.evaluate(all_substitutions)
 
-        #the equation is in form lhs=rhs, but we want it to be f(x)=0. Subtracting rhs gives lhs-rhs=0, which is in the right form
+        #the equation is in form lhs=rhs, but we want it to be f(x)=0. 
+        #Subtracting rhs gives lhs-rhs=0, which is in the right form
         evaluation = left - right
 
         return evaluation
