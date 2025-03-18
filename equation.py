@@ -70,8 +70,13 @@ class EquationMenu:
 
         char_buttons = []
         for index, char in enumerate(EquationMenu.CHAR_BUTTONS):
-            top_left_x = EquationMenu.CHAR_BUTTON_TOP_LEFT[0] + index * (EquationMenu.CHAR_BUTTON_WIDTH + padding_x)
-            button = gui.ColourChangeButton((top_left_x, EquationMenu.CHAR_BUTTON_TOP_LEFT[1]), EquationMenu.CHAR_BUTTON_WIDTH, EquationMenu.CHAR_BUTTON_HEIGHT, char)
+            top_left_x = (EquationMenu.CHAR_BUTTON_TOP_LEFT[0] + 
+                          index * (EquationMenu.CHAR_BUTTON_WIDTH + padding_x))
+            
+            button = gui.ColourChangeButton((top_left_x, EquationMenu.CHAR_BUTTON_TOP_LEFT[1]), 
+                                            EquationMenu.CHAR_BUTTON_WIDTH, 
+                                            EquationMenu.CHAR_BUTTON_HEIGHT, 
+                                            char)
 
             char_buttons.append(button)
 
