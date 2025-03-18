@@ -86,7 +86,8 @@ class EquationMenu:
         width = gui.SCREEN_WIDTH - 2 * EquationMenu.BACKGROUND_BOX_TOP_LEFT[0]
         height = gui.SCREEN_HEIGHT - 2 * EquationMenu.BACKGROUND_BOX_TOP_LEFT[1]
 
-        #although the background rect is not a button, it will be draw exactly the same as one so it is stored as a button object
+        #although the background rect is not a button, 
+        #it will be draw exactly the same as one so it is stored as a button object
         background_rect = gui.BasicButton(EquationMenu.BACKGROUND_BOX_TOP_LEFT, width, height)
 
         background_rect.set_border_width(EquationMenu.BACKGROUND_BOX_BORDER_WIDTH)
@@ -96,12 +97,20 @@ class EquationMenu:
         return background_rect
     
     def get_equation_box_dimensions(self):
-        #get the width, height and x coordinate of the top left pos of the equation boxes
-        top_left_x = EquationMenu.BACKGROUND_BOX_TOP_LEFT[0] + EquationMenu.EQUATION_BOX_PADDING_X
+        #get the width, height and x coordinate of 
+        #the top left pos of the equation boxes
+        top_left_x = (EquationMenu.BACKGROUND_BOX_TOP_LEFT[0] + 
+                      EquationMenu.EQUATION_BOX_PADDING_X)
+        
         width = gui.SCREEN_WIDTH - 2 * top_left_x
 
-        available_height = gui.SCREEN_HEIGHT - 2 * EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] - EquationMenu.EQUATION_BOX_PADDING_Y
-        total_height = available_height // (EquationMenu.NUM_EQUATION_BOXES + 1)  #we need to +1 to the number of equation boxes because the input box at the bottom also takes up space
+        available_height = (gui.SCREEN_HEIGHT - 
+                            2 * EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] - 
+                            EquationMenu.EQUATION_BOX_PADDING_Y)
+        
+        #we need to +1 to the number of equation boxes because 
+        #the input box at the bottom also takes up space
+        total_height = available_height // (EquationMenu.NUM_EQUATION_BOXES + 1)
         box_height = total_height - EquationMenu.EQUATION_BOX_PADDING_Y
 
         return width, box_height, top_left_x
