@@ -51,7 +51,10 @@ class EquationMenu:
         width, height, top_left_x = self.get_equation_box_dimensions()
 
         #position the input box at the bottom of the screen
-        top_left_y = EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] + EquationMenu.NUM_EQUATION_BOXES * (height + EquationMenu.EQUATION_BOX_PADDING_Y) + EquationMenu.EQUATION_BOX_PADDING_Y
+        top_left_y = (EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] + 
+                      EquationMenu.NUM_EQUATION_BOXES * 
+                      (height + EquationMenu.EQUATION_BOX_PADDING_Y) + 
+                      EquationMenu.EQUATION_BOX_PADDING_Y)
 
         equation_input_box = gui.TextInput((top_left_x, top_left_y), width, height, "Enter equation:")
         equation_input_box.set_font_size(EquationMenu.EQUATION_FONT_SIZE)
