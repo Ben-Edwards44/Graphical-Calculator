@@ -62,7 +62,9 @@ class ArbitraryEquation:
         return variable
     
     def check_solution(self, all_solutions, solution, min, max):
-        solves_equation = abs(self.evaluate_equals_zero(solution)) < ArbitraryEquation.TOLERANCE  #the Newton-Raphson method does not always converge, so sometimes gives numbers that are not solutions
+        #the Newton-Raphson method does not always converge,
+        #so sometimes gives numbers that are not solutions
+        solves_equation = abs(self.evaluate_equals_zero(solution)) < ArbitraryEquation.TOLERANCE
         in_range = min <= solution <= max
         is_new = is_new_element(all_solutions, solution, ArbitraryEquation.TOLERANCE)
 
