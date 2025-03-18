@@ -136,7 +136,8 @@ class EquationMenu:
                 char = EquationMenu.CHAR_BUTTONS[index]
 
                 if char == "solve":
-                    new_expression_box = EquationBox(self.window, self.equation_input_box.get_inputted_text())
+                    new_expression_box = EquationBox(self.window, 
+                                                     self.equation_input_box.get_inputted_text())
                     self.equation_boxes.append(new_expression_box)
                 else:
                     text_to_add = self.get_char_button_text(char)
