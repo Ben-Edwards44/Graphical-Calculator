@@ -88,7 +88,8 @@ class ArbitraryEquation:
 
 
 def is_new_element(list, num, tolerance):
-    #determine if the num is in the list, within a given tolerance (e.g. 5.001 should not be new to [3, 4, 5])
+    #determine if the num is in the list, within a 
+    #given tolerance (e.g. 5.001 should not be new to [3, 4, 5])
     for element in list:
         if abs(element - num) < tolerance:
             return False  #already in list
