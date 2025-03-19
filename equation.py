@@ -217,7 +217,8 @@ class EquationBox:
         return solutions
     
     def setup_background_rect(self, top_left_pos, width, height):
-        #the background rect just looks like a button, but it is never checked to see if its clicked
+        #the background rect just looks like a button, 
+        #but it is never checked to see if its clicked
         background_rect = gui.BasicButton(top_left_pos, width, height)
         background_rect.set_background_colour(EquationBox.COLOUR)
 
