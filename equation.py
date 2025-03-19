@@ -230,8 +230,11 @@ class EquationBox:
         equation_text = gui.DisplayText(self.equation_string, top_left_pos)
         solution_text = gui.DisplayText(self.solution_string, top_left_pos)
 
-        equation_text.set_top_left_pos(top_left_pos)  #put the equation on the left of the box
-        solution_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))  #put the answer on the right of the box
+        #put the equation on the left of the box
+        equation_text.set_top_left_pos(top_left_pos)
+
+        #put the answer on the right of the box
+        solution_text.set_top_right_pos((top_left_pos[0] + width, top_left_pos[1]))
 
         background_rect.draw(self.window)
         equation_text.draw(self.window)
