@@ -43,7 +43,8 @@ class Axis:
     get_view_changed = lambda self: self.view_changed
 
     def calculate_pixel_width(self):
-        #calculate the amount of axis space taken up by one pixel - needed for sampling each pixel multiple times
+        #calculate the amount of axis space taken up by one pixel
+        #this is needed for sampling each pixel multiple times
         pixel_width = self.width / (gui.SCREEN_WIDTH - Axis.PIXEL_INDENT_X)
 
         return pixel_width
@@ -62,7 +63,8 @@ class Axis:
         fraction_up = (axis_y - self.min_y) / self.height
         scaled_y = gui.SCREEN_HEIGHT * fraction_up
 
-        #pygame uses the top of the screen as 0, but the axis uses the bottom of the screen as 0 so we need to subtract scaled_y from the screen height
+        #pygame uses the top of the screen as 0, but the axis uses the 
+        #bottom of the screen as 0, so we need to subtract scaled_y from the screen height
         pixel_y = gui.SCREEN_HEIGHT - int(scaled_y)
 
         return pixel_y
