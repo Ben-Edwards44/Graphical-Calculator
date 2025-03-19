@@ -103,11 +103,13 @@ class Axis:
                          Axis.MAIN_AXIS_WIDTH)
 
     def calculate_line_spacing(self, min, max):
-        #choose the spacing of the background lines such that the number is as close to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
+        #choose the spacing of the background lines such that the number is as close
+        #to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
         axis_space = abs(max - min)
         desired_axis_spacing = axis_space / Axis.DESIRED_NUM_BACKGROUND_LINES
 
-        #choose the nearest power of 10 to the desired axis spacing (because we want to go in steps of 1, 10, 100, 1000...)
+        #choose the nearest power of 10 to the desired axis spacing 
+        #(because we want to go in steps of 1, 10, 100, 1000...)
         current_power = math.log(desired_axis_spacing, 10)
         lower = 10**int(current_power)
         upper = 10**(int(current_power) + 1)
