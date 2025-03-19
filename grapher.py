@@ -84,7 +84,11 @@ class Axis:
 
         origin_x = self.axis_x_to_pixel_x(0)
 
-        pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (origin_x, 0), (origin_x, gui.SCREEN_HEIGHT), Axis.MAIN_AXIS_WIDTH)
+        pygame.draw.line(self.window, 
+                         Axis.BACKGROUND_LINE_COLOUR, 
+                         (origin_x, 0), 
+                         (origin_x, gui.SCREEN_HEIGHT), 
+                         Axis.MAIN_AXIS_WIDTH)
 
     def draw_x_axis(self):
         #draw the x axis if it lies between self.min_y and self.max_y
@@ -92,7 +96,11 @@ class Axis:
 
         origin_y = self.axis_y_to_pixel_y(0)
 
-        pygame.draw.line(self.window, Axis.BACKGROUND_LINE_COLOUR, (Axis.PIXEL_INDENT_X, origin_y), (gui.SCREEN_WIDTH, origin_y), Axis.MAIN_AXIS_WIDTH)
+        pygame.draw.line(self.window, 
+                         Axis.BACKGROUND_LINE_COLOUR, 
+                         (Axis.PIXEL_INDENT_X, origin_y), 
+                         (gui.SCREEN_WIDTH, origin_y), 
+                         Axis.MAIN_AXIS_WIDTH)
 
     def calculate_line_spacing(self, min, max):
         #choose the spacing of the background lines such that the number is as close to the desired number of lines and each line goes up in 0.1, 1, 10, 100...
