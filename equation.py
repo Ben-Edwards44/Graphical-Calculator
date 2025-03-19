@@ -148,10 +148,14 @@ class EquationMenu:
     def draw_equation_boxes(self):
         width, height, top_left_x = self.get_equation_box_dimensions()
 
-        most_recent_boxes = self.equation_boxes[-EquationMenu.NUM_EQUATION_BOXES:]  #only draw the most recent equation boxes
+        #only draw the most recent equation boxes
+        most_recent_boxes = self.equation_boxes[-EquationMenu.NUM_EQUATION_BOXES:]
 
         for index, box in enumerate(most_recent_boxes):
-            top_left_y = EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] + EquationMenu.EQUATION_BOX_PADDING_Y + index * (height + EquationMenu.EQUATION_BOX_PADDING_Y)
+            top_left_y = (EquationMenu.BACKGROUND_BOX_TOP_LEFT[1] + 
+                          EquationMenu.EQUATION_BOX_PADDING_Y + 
+                          index * (height + EquationMenu.EQUATION_BOX_PADDING_Y))
+            
             box.draw((top_left_x, top_left_y), width, height)
 
     def draw(self):
