@@ -126,12 +126,16 @@ class Axis:
     
     def calculate_first_line_pos(self, axis_spacing, ideal_start):
         #calculate the position of the first background line to be drawn
-        threshold_steps = abs(ideal_start) / axis_spacing  #this is the number of axis_spacing steps we need to take to get from the origin to the ideal_start point
+
+        #this is the number of axis_spacing steps we need to take to 
+        #get from the origin to the ideal_start point
+        threshold_steps = abs(ideal_start) / axis_spacing
         steps = int(threshold_steps)
 
         start_point = steps * axis_spacing
 
-        if ideal_start < 0: start_point *= -1  #we actually want to start in the other direction
+        #we actually want to start in the other direction
+        if ideal_start < 0: start_point *= -1
 
         return start_point
 
