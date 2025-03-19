@@ -207,7 +207,9 @@ class EquationBox:
 
     def solve_equation(self):
         try:
-            solutions = equation_utils.solve_equation(self.equation_string, EquationBox.SOLUTION_MIN_X, EquationBox.SOLUTION_MAX_X)
+            solutions = equation_utils.solve_equation(self.equation_string, 
+                                                      EquationBox.SOLUTION_MIN_X, 
+                                                      EquationBox.SOLUTION_MAX_X)
         except:
             #the user has entered an invalid equation: no solutions will be displayed
             solutions = []
