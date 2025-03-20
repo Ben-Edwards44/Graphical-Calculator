@@ -228,7 +228,8 @@ class Axis:
             self.zoom(event.y)
 
     def check_user_input(self):
-        #self.view_changed will be overwritten if the user scrolls or drags their mouse
+        #self.view_changed will be overwritten if 
+        #the user scrolls or drags their mouse
         self.view_changed = False
 
         self.check_mouse_drag()
@@ -242,7 +243,6 @@ class Axis:
         self.draw_y_axis()
 
 
-#NOTE: do dry run of graph drawing algorithms - points vs lines (good continuity vs not right for discontinuous curves)
 class Graph:
     RESOLUTION = 4  #how many x value samples taken per pixel
 
