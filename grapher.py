@@ -216,7 +216,8 @@ class Axis:
 
             self.prev_mouse_pos = mouse_pos
         else:
-            #the user has stopped dragging, so set prev_mouse_pos to None to stop the axis being translated further
+            #the user has stopped dragging, so set prev_mouse_pos 
+            #to None to stop the axis being translated further
             self.prev_mouse_pos = None
 
     def check_mouse_scroll(self):
@@ -227,7 +228,8 @@ class Axis:
             self.zoom(event.y)
 
     def check_user_input(self):
-        self.view_changed = False  #this will be overwritten if the user scrolls or drags their mouse
+        #self.view_changed will be overwritten if the user scrolls or drags their mouse
+        self.view_changed = False
 
         self.check_mouse_drag()
         self.check_mouse_scroll()
