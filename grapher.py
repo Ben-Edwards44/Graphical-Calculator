@@ -263,7 +263,9 @@ class Graph:
 
         try:
             test_y = self.get_y_values(test_value_x)
-            valid = test_y is not None  #if a number is returned (not a None value), the equation must be valid
+
+            #if a number is returned (not a None value), the equation must be valid
+            valid = test_y is not None
         except:
             #there was an error when evaluating the graph's equation, so it must be invalid
             valid = False
@@ -271,7 +273,8 @@ class Graph:
         return valid
     
     def get_points_on_graph(self):
-        points_on_graph = set()  #a set is used to remove duplicates (no need to draw a pixel twice)
+        #a set is used to remove duplicates (no need to draw a pixel twice)
+        points_on_graph = set()
         for pixel_x in range(Axis.PIXEL_INDENT_X, gui.SCREEN_WIDTH):
             axis_x = self.axis.pixel_x_to_axis_x(pixel_x)
 
@@ -281,7 +284,8 @@ class Graph:
                 x = axis_x + self.axis.pixel_width * fraction_into_pixel
                 y_values = self.get_y_values(x)
 
-                if y_values is None: continue  #this x value results in an error, like dividing by 0
+                #check if this x value results in an error, like dividing by 0
+                if y_values is None: continue
 
                 for y in y_values:
                     pixel_y = self.axis.axis_y_to_pixel_y(y)
@@ -295,12 +299,15 @@ class Graph:
         if self.equation_string == "": return  #graph equation has not yet been set
 
         if self.pixel_points_on_graph is None or self.axis.get_view_changed():
-            #we need to calcluate what points are on the graph because this has not yet been done, or the axis has changed
+            #we need to calcluate what points are on the graph 
+            #because this has not yet been done, or the axis has changed
             self.pixel_points_on_graph = self.get_points_on_graph()
 
         for x, y in self.pixel_points_on_graph:
             #draw a rectangle one pixel wide at each coordinate on the graph
-            pygame.draw.rect(self.window, self.colour, (x, y, Graph.LINE_WIDTH, Graph.LINE_WIDTH))
+            pygame.draw.rect(self.window, 
+                             self.colour, 
+                             (x, y, Graph.LINE_WIDTH, Graph.LINE_WIDTH))
 
 
 class ExplicitGraph(Graph):
@@ -331,7 +338,8 @@ class ExplicitGraph(Graph):
             #for graphs like y=1/x, substituting x=0 gives a divide by zero error
             y = None
 
-        if y is None: return None  #this can occur if the equation is y= (nothing given on right hand side)
+        #y can be None if the equation is y= (nothing given on right hand side)
+        if y is None: return None
 
         return [y]
     
@@ -348,8 +356,12 @@ class ImplicitGraph(Graph):
         lhs_expression = calculator_utils.AlgebraicInfixExpression(left_string)
         rhs_expression = calculator_utils.AlgebraicInfixExpression(right_string)
 
-        #we need the equation to be solved quickly, not very accurately (so set fast_solve to True)
-        equation_solver = equation_utils.ArbitraryEquation(lhs_expression, rhs_expression, "y", True)
+        #we need the equation to be solved quickly, 
+        #not very accurately (so set fast_solve to True)
+        equation_solver = equation_utils.ArbitraryEquation(lhs_expression, 
+                                                           rhs_expression, 
+                                                           "y", 
+                                                           True)
 
         return equation_solver
 
@@ -357,9 +369,12 @@ class ImplicitGraph(Graph):
         known_substitutions = {"x" : x_value}
 
         try:
-            y_values = self.equation_solver.find_all_solutions(self.axis.min_y, self.axis.max_y, known_substitutions)
+            y_values = self.equation_solver.find_all_solutions(self.axis.min_y, 
+                                                               self.axis.max_y, 
+                                                               known_substitutions)
         except:
-            #if an equation has not solutions, there may be a division by zero error when trying to solve it
+            #if an equation has not solutions, there may be 
+            #a division by zero error when trying to solve it
             return None
         
         return y_values
@@ -396,15 +411,26 @@ class GrapherMenu:
     def setup_graph_inputs(self):
         num_boxes = len(GrapherMenu.GRAPH_COLOURS)
 
-        back_button_space = gui.BACK_BUTTON_POS[1] * 2 + gui.BACK_BUTTON_HEIGHT
-        box_height = (gui.SCREEN_HEIGHT - back_button_space - GrapherMenu.GRAPH_INPUT_PADDING_Y * (num_boxes + 1)) // num_boxes
+        back_button_space = (gui.BACK_BUTTON_POS[1] * 2 
+                             + gui.BACK_BUTTON_HEIGHT)
+        
+        box_height = (gui.SCREEN_HEIGHT - 
+                      back_button_space - 
+                      GrapherMenu.GRAPH_INPUT_PADDING_Y * 
+                      (num_boxes + 1)) // num_boxes
 
         graph_inputs = []
         for i in range(num_boxes):
-            top_left_y = back_button_space + GrapherMenu.GRAPH_INPUT_PADDING_Y + i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y)
+            top_left_y = (back_button_space + 
+                          GrapherMenu.GRAPH_INPUT_PADDING_Y + 
+                          i * (box_height + GrapherMenu.GRAPH_INPUT_PADDING_Y))
+            
             top_left = (GrapherMenu.GRAPH_INPUT_PADDING_X, top_left_y)
 
-            input_box = gui.TextInput(top_left, GrapherMenu.GRAPH_INPUT_WIDTH, box_height, "...")
+            input_box = gui.TextInput(top_left, 
+                                      GrapherMenu.GRAPH_INPUT_WIDTH, 
+                                      box_height, 
+                                      "...")
 
             graph_inputs.append(input_box)
 
@@ -426,13 +452,18 @@ class GrapherMenu:
         for inx, input_box in enumerate(self.graph_inputs):
             inputted_equation = input_box.get_inputted_text()
             
-            if inputted_equation == "": continue  #the graph's equation has not yet been set
+            #check if the graph's equation has not yet been set
+            if inputted_equation == "": continue
 
             prev_graph = self.graphs[inx]
 
             if prev_graph is None or inputted_equation != prev_graph.equation_string:
-                #the graph's equation has changed - replace the graph object with a new one
-                new_graph = create_new_graph(inputted_equation, self.window, self.axis, GrapherMenu.GRAPH_COLOURS[inx])
+                #the graph's equation has changed, so
+                #replace the graph object with a new one
+                new_graph = create_new_graph(inputted_equation, 
+                                             self.window, 
+                                             self.axis, 
+                                             GrapherMenu.GRAPH_COLOURS[inx])
 
                 self.graphs[inx] = new_graph
 
@@ -454,7 +485,8 @@ class GrapherMenu:
         self.axis.draw()
 
         for graph in self.graphs:
-            #a graph will be None if it has not yet been set, or has an invalid equation
+            #a graph will be None if it has not yet 
+            #been set, or has an invalid equation
             if graph is not None:
                 graph.draw()
 
@@ -480,7 +512,8 @@ def is_explicit_function(equation_string):
 
 
 def create_new_graph(equation_string, window, axis, colour):
-    #return a graph object with the equation string as its equation. If the equation string is invalid, return None
+    #return a graph object with the equation string as its 
+    #equation. If the equation string is invalid, return None
     if "=" not in equation_string: return None
 
     #try the explicit graph fist because this is more performant
