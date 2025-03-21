@@ -97,7 +97,9 @@ class SimulEquationMenu:
         equation_constants = [equation.get_constant() for equation in self.equations]
 
         try:
-            equation_system = simul_equation_utils.SystemEquations(equation_variables, equation_constants)
+            equation_system = simul_equation_utils.SystemEquations(equation_variables, 
+                                                                   equation_constants)
+            
             solutions = equation_system.solve()
         except:
             #the system of equations have no unique solution, or there is an error in the coefficients
