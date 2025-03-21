@@ -88,7 +88,9 @@ class SimulEquationMenu:
                     solution_text += ","
 
         self.solution_text.set_displayed_text(solution_text)
-        self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)  #the displayed text may have changed length, so we need to re-position the text
+
+        #the displayed text may have changed length, so we need to re-position the text
+        self.solution_text.set_top_left_pos(SimulEquationMenu.SOLUTION_TOP_LEFT)
     
     def solve_equations(self):
         equation_variables = [equation.get_variable_coefficients() for equation in self.equations]
