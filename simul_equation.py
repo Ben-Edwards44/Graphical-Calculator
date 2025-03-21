@@ -41,12 +41,18 @@ class SimulEquationMenu:
     get_go_back = lambda self: self.go_back
 
     def setup_solve_button(self):
-        solve_button = gui.ColourChangeButton(SimulEquationMenu.SOLVE_BUTTON_TOP_LEFT, SimulEquationMenu.SOLVE_BUTTON_WIDTH, SimulEquationMenu.SOLVE_BUTTON_HEIGHT, "Solve")
+        solve_button = gui.ColourChangeButton(SimulEquationMenu.SOLVE_BUTTON_TOP_LEFT, 
+                                              SimulEquationMenu.SOLVE_BUTTON_WIDTH, 
+                                              SimulEquationMenu.SOLVE_BUTTON_HEIGHT, 
+                                              "Solve")
 
         return solve_button
     
     def setup_num_equation_input(self):
-        num_equation_input = gui.TextInput(SimulEquationMenu.NUM_EQUATION_TOP_LEFT, SimulEquationMenu.NUM_EQUATION_WIDTH, SimulEquationMenu.NUM_EQUATION_HEIGHT, "Num equations:")
+        num_equation_input = gui.TextInput(SimulEquationMenu.NUM_EQUATION_TOP_LEFT, 
+                                           SimulEquationMenu.NUM_EQUATION_WIDTH, 
+                                           SimulEquationMenu.NUM_EQUATION_HEIGHT, 
+                                           "Num equations:")
 
         return num_equation_input
     
