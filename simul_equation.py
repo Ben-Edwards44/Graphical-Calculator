@@ -280,7 +280,11 @@ class Constant(Variable):
         top_left_x = self.top_left[0] + Variable.TEXT_WIDTH
         top_left_y = self.top_left[1]
 
-        input_box = gui.TextInput((top_left_x, top_left_y), Variable.INPUT_WIDTH, Variable.INPUT_HEIGHT, "...")
+        input_box = gui.TextInput((top_left_x, top_left_y), 
+                                  Variable.INPUT_WIDTH, 
+                                  Variable.INPUT_HEIGHT, 
+                                  "...")
+        
         input_box.set_font_size(Variable.FONT_SIZE)
 
         return input_box
