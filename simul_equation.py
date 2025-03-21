@@ -63,7 +63,8 @@ class SimulEquationMenu:
         return solution_text
 
     def create_equations(self, num_equations):
-        #the number of variables in each equation is the same as the number of equations
+        #the number of variables in each equation 
+        #is the same as the number of equations
         equations = []
         for i in range(num_equations):
             equation = Equation(self.window, i, num_equations)
