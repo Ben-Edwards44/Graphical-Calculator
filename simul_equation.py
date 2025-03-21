@@ -255,7 +255,8 @@ class Variable:
         return text
     
     def get_coefficient(self):
-        #evaluate the expression entered into the coefficient input box and return it
+        #evaluate the expression entered into 
+        #the coefficient input box and return it
         expression = self.input_box.get_inputted_text()
         coefficient = calculator_utils.evaluate_expression(expression)
 
