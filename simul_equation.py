@@ -232,14 +232,22 @@ class Variable:
         self.name_text = self.setup_text()
 
     def setup_input(self):
-        input_box = gui.TextInput(self.top_left, Variable.INPUT_WIDTH, Variable.INPUT_HEIGHT, "...")
+        input_box = gui.TextInput(self.top_left, 
+                                  Variable.INPUT_WIDTH, 
+                                  Variable.INPUT_HEIGHT, 
+                                  "...")
+        
         input_box.set_font_size(Variable.FONT_SIZE)
 
         return input_box
 
     def setup_text(self):
-        center_x = self.top_left[0] + Variable.INPUT_WIDTH + Variable.TEXT_WIDTH // 2
-        center_y = self.top_left[1] + Variable.INPUT_HEIGHT // 2
+        center_x = (self.top_left[0] + 
+                    Variable.INPUT_WIDTH + 
+                    Variable.TEXT_WIDTH // 2)
+        
+        center_y = (self.top_left[1] + 
+                    Variable.INPUT_HEIGHT // 2)
 
         text = gui.DisplayText(self.name, (center_x, center_y))
         text.set_font_size(Variable.FONT_SIZE)
