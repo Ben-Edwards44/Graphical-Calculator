@@ -38,8 +38,10 @@ class Matrix:
         self.height = len(items)
 
     def matrix_multiply(self, other_matrix):
-        #multiply two matrixes together        
-        result_items = [[None for _ in range(other_matrix.width)] for _ in range(self.height)]  #create blank 2D array
+        #multiply two matrixes together \nd return the result matrix
+        
+        #create blank 2D array       
+        result_items = [[None for _ in range(other_matrix.width)] for _ in range(self.height)]
 
         for row_inx in range(self.height):
             for col_inx in range(other_matrix.width):
@@ -85,7 +87,9 @@ class SquareMatrix(Matrix):
         new_items = []
         for col_index in range(self.width):
             column = [self.items[row_index][col_index] for row_index in range(self.height)]
-            new_items.append(column)  #the columns of the old matrix become the rows of the new ones
+
+            #the columns of the old matrix become the rows of the new ones
+            new_items.append(column)
 
         return SquareMatrix(new_items)
 
